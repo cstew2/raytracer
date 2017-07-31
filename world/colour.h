@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 typedef struct {
-        uint_fast32_t c;
+        uint32_t rgba;
 }colour;
 
-colour new_colour(uint_fast8_t r, uint_fast8_t g, uint_fast8_t b, uint_fast8_t a);
+colour new_colour(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
 #endif

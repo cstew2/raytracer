@@ -4,6 +4,7 @@
 
 #include "main.h"
 
+#include "render/paint.h"
 
 int main(int argc, char **argv)
 {
@@ -17,6 +18,6 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-	
+       	gl_init();
 	return 0;
 }

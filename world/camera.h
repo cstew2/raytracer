@@ -1,12 +1,14 @@
-#ifndef 
-#define 
+#ifndef _CAMERA_H_
+#define _CAMERA_H_
+
+#include "math/vector.h"
 
 typedef struct {
-	vect3 position;
-	vect3 lookat;
-	vect3 up;
+	v3 position;
+	v3 lookat;
+	v3 up;
 }camera;
 
-camera new_camera(vect3 p, vect3 l, vect3 u);
+camera new_camera(v3 p, v3 l, v3 u);
 
 #endif

@@ -1,6 +1,6 @@
 TARGET          = raytracer
 
-MODULES         = main  math  renderer world
+MODULES         = main math world render voxel
 
 CC              = gcc
 
@@ -9,10 +9,9 @@ CFLAGS          := -std=c99 -I./
 DCFLAGS         := -g -ggdb3 -O0 -Wall -pedantic -Wextra -Wundef -Wshadow \
                    -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wwrite-strings \
                    -Wswitch-default -Wswitch-enum -Wunreachable-code -Winit-self \
-		   -Werror -Wuninitialized 
+		   -Werror -Wuninitialized
 
 RCFLAGS         := -O2 -fwhole-program -s -DNDEBUG 
-
 
 LIBS            := 
 
@@ -20,7 +19,6 @@ include         $(patsubst %, %/module.mk, $(MODULES))
 
 OBJ             := $(patsubst %.c,%.o, $(filter %.c,$(SRC)))
 
-AR		:= ar1
 
 .PHONY: debug
 debug: CFLAGS += $(DCFLAGS)
@@ -29,7 +27,6 @@ debug: build
 .PHONY: release
 release: CFLAGS += $(RCFLAGS)
 release: build
-
 
 .PHONY: build
 build: $(OBJ)
