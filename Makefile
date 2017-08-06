@@ -39,5 +39,8 @@ build: $(OBJ)
 
 .PHONY: clean
 clean:
-	@rm -f $(OBJ) $(TARGET) core
+	@rm -f $(OBJ) $(TARGET) core raytracer_gl.log
 	@echo Cleaned $(OBJ) and $(TARGET)
+
+.PHONY: rebuild
+rebuild: clean build
