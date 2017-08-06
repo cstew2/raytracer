@@ -4,7 +4,7 @@
 
 #include "main.h"
 
-#include "render/paint.h"
+#include "render/render.h"
 
 int main(int argc, char **argv)
 {
@@ -18,6 +18,31 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-       	gl_init();
+	main_loop();
+	
 	return 0;
+}
+
+void main_loop()
+{
+	while (!glfwWindowShouldClose( window)) {
+		input();
+		update();
+		render();
+	}
+}
+
+void draw()
+{
+
+}
+
+void update()
+{
+	gl_render();
+}
+
+void input()
+{
+
 }
