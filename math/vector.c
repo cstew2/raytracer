@@ -2,59 +2,59 @@
 
 #include "vector.h"
 
-const v3 v3_origin = {0.0, 0.0, 0.0};
-const v4 v4_origin = {0.0, 0.0, 0.0, 0.0};
+const vec3 vec3_origin = {0.0, 0.0, 0.0};
+const vec4 vec4_origin = {0.0, 0.0, 0.0, 0.0};
 
-v3 v3_add(const v3 u, const v3 v)
+vec3 vec3_add(const vec3 u, const vec3 v)
 {
-	v3 w;
+	vec3 w;
 	w.x = u.x + v.x;
 	w.y = u.y + v.y;
 	w.z = u.z + v.z;
 	return w;
 }
 
-v3 v3_sub(const v3 u, const v3 v)
+vec3 vec3_sub(const vec3 u, const vec3 v)
 {
-	v3 w;
+	vec3 w;
 	w.x = u.x - v.x;
 	w.y = u.y - v.y;
 	w.z = u.z - v.z;
 	return w;
 }
 
-v3 v3_scale(const v3 u, const float a)
+vec3 vec3_scale(const vec3 u, const float a)
 {
-	v3 w;
+	vec3 w;
 	w.x = u.x * a;
 	w.y = u.y * a;
 	w.z = u.z * a;
 	return w;
 }
 
-float v3_dot(const v3 u, const v3 v)
+float vec3_dot(const vec3 u, const vec3 v)
 {
 	return (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
 }
 
-v3 v3_cross(const v3 u, const v3 v)
+vec3 vec3_cross(const vec3 u, const vec3 v)
 {
-	v3 w;
+	vec3 w;
 	w.x = u.y*v.z - u.z*v.y;
 	w.x = u.z*v.x - u.x*v.z;
 	w.z = u.x*v.y - u.y*v.x;
 	return w;
 }
 
-float v3_length(const v3 u)
+float vec3_length(const vec3 u)
 {
 	return sqrt((u.x*u.x)+(u.y*u.y)+(u.z*u.z)); 
 }
 
-v3 v3_normalise(const v3 u)
+vec3 vec3_normalise(const vec3 u)
 {
-	float length = v3_length(u);
-	v3 v = u;
+	float length = vec3_length(u);
+	vec3 v = u;
 	if(length) {
 		float n = 1/length;
 		v.x *= n;
@@ -64,14 +64,14 @@ v3 v3_normalise(const v3 u)
 	return v;
 }
 
-v3 new_v3(const float x, const float y, const float z)
+vec3 new_vec3(const float x, const float y, const float z)
 {
-	return (v3){x, y, z};
+	return (vec3){x, y, z};
 }
 
-v4 v4_add(const v4 u, const v4 v)
+vec4 vec4_add(const vec4 u, const vec4 v)
 {
-	v4 w;
+	vec4 w;
 	w.w = u.w + v.w;
 	w.x = u.x + v.x;
 	w.y = u.y + v.y;
@@ -79,9 +79,9 @@ v4 v4_add(const v4 u, const v4 v)
 	return w;
 }
 
-v4 v4_sub(const v4 u, const v4 v)
+vec4 vec4_sub(const vec4 u, const vec4 v)
 {
-	v4 w;
+	vec4 w;
 	w.w = u.w - v.w;
 	w.x = u.x - v.x;
 	w.y = u.y - v.y;
@@ -89,9 +89,9 @@ v4 v4_sub(const v4 u, const v4 v)
 	return w;
 }
 
-v4 v4_scale(const v4 u, const float a)
+vec4 vec4_scale(const vec4 u, const float a)
 {
-	v4 w;
+	vec4 w;
 	w.w = u.w * a;
 	w.x = u.x * a;
 	w.y = u.y * a;
@@ -99,29 +99,29 @@ v4 v4_scale(const v4 u, const float a)
 	return w;
 }
 
-float v4_dot(const v4 u, const v4 v)
+float vec4_dot(const vec4 u, const vec4 v)
 {
 	return (u.w * v.w) + (u.x * v.x) + (u.y * v.y) + (u.z * v.z);
 }
 
-v4 v4_cross(const v4 u, const v4 v)
+vec4 vec4_cross(const vec4 u, const vec4 v)
 {
-	v4 w;
+	vec4 w;
 	w.x = u.y*v.z - u.z*v.y;
 	w.x = u.z*v.x - u.x*v.z;
 	w.z = u.x*v.y - u.y*v.x;
 	return w;
 }
 
-float v4_length(const v4 u)
+float vec4_length(const vec4 u)
 {
 	return sqrt((u.w*u.w)+(u.x*u.x)+(u.y*u.y)+(u.z*u.z)); 
 }
 
-v4 v4_normalise(const v4 u)
+vec4 vec4_normalise(const vec4 u)
 {
-	float length = v4_length(u);
-	v4 v = u;
+	float length = vec4_length(u);
+	vec4 v = u;
 	if(length) {
 		float n = 1/length;
 		v.w *= n;
@@ -132,7 +132,7 @@ v4 v4_normalise(const v4 u)
 	return v;
 }
 
-v4 new_v4(const float w, const float x, const float y, const float z)
+vec4 new_vec4(const float w, const float x, const float y, const float z)
 {
-	return (v4){w, x, y, z};
+	return (vec4){w, x, y, z};
 }

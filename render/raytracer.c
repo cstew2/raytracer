@@ -1,7 +1,9 @@
 #include "raytracer.h"
 
-void trace(void)
+ray new_ray(vec3 p, vec3 d)
 {
-
-	return;
+	ray r;
+	r.pos = p;
+	r.dir = d;
+	return r;
 }

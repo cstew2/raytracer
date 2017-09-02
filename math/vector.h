@@ -5,7 +5,7 @@ typedef struct {
 	float x;
 	float y;
 	float z;
-}v3;
+}vec3;
 
 
 typedef struct {
@@ -13,35 +13,35 @@ typedef struct {
 	float x;
 	float y;
 	float z;
-}v4;
+}vec4;
 
 
-extern const v3 v3_origin;
-extern const v4 v4_origin;
+extern const vec3 vec3_origin;
+extern const vec4 vec4_origin;
 
-v3 v3_add(const v3 u, const v3 v);
-v3 v3_sub(const v3 u, const v3 v);
-v3 v3_scale(const v3 u, const float a);
-float v3_dot(const v3 u, const v3 v);
-v3 v3_cross(const v3 u, const v3 v);
+vec3 vec3_add(const vec3 u, const vec3 v);
+vec3 vec3_sub(const vec3 u, const vec3 v);
+vec3 vec3_scale(const vec3 u, const float a);
+float vec3_dot(const vec3 u, const vec3 v);
+vec3 vec3_cross(const vec3 u, const vec3 v);
 
-float v3_length(const v3 u);
-v3 v3_normalise(const v3 u);
-int v3_compare(const v3 u, const v3 v);
+float vec3_length(const vec3 u);
+vec3 vec3_normalise(const vec3 u);
+int vec3_compare(const vec3 u, const vec3 v);
 
-v3 new_v3(const float x, const float y, const float z);
+vec3 new_vec3(const float x, const float y, const float z);
 
 
-v4 v4_add(const v4 u, const v4 v);
-v4 v4_sub(const v4 u, const v4 v);
-v4 v4_scale(const v4 u, const float a);
-float v4_dot(const v4 u, const v4 v);
-v4 v4_cross(const v4 u, const v4 v);
+vec4 vec4_add(const vec4 u, const vec4 v);
+vec4 vec4_sub(const vec4 u, const vec4 v);
+vec4 vec4_scale(const vec4 u, const float a);
+float vec4_dot(const vec4 u, const vec4 v);
+vec4 vec4_cross(const vec4 u, const vec4 v);
 
-float v4_length(const v4 u);
-v4 v4_normalise(const v4 u);
-int v4_compare(const v4 u, const v4 v);
+float vec4_length(const vec4 u);
+vec4 vec4_normalise(const vec4 u);
+int vec4_compare(const vec4 u, const vec4 v);
 
-v4 new_v4(const float w, const float x, const float y, const float z);
+vec4 new_vec4(const float w, const float x, const float y, const float z);
 
 #endif

@@ -1,6 +1,17 @@
 #ifndef _RAYTRACER_H_
 #define _RAYTRACER_H_
 
-void trace(void);
+#include "math/vector.h"
+#include "voxel/dag.h"
+#include "world/colour.h"
+#include "world/camera.h"
+#include "render/render.h"
+
+typedef struct {
+	vec3 pos;
+	vec3 dir;
+}ray;
+
+ray new_ray(vec3 p, vec3 d);
 
 #endif

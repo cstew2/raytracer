@@ -12,10 +12,16 @@ typedef struct {
 	colour *screen;
 }canvas;
 
+GLFWwindow *window;
+
 canvas new_canvas(int width, int height, colour *c);
 
 int gl_render(void);
 int gl_init(void);
+void gl_cleanup(void);
+void gl_input(void);
+
+	
 int load_texture(canvas *c, GLuint *tex);
 void update_fps_counter(GLFWwindow *w);
 void log_gl_params(void);

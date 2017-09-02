@@ -4,11 +4,11 @@
 #include "math/vector.h"
 
 typedef struct {
-	v3 position;
-	v3 lookat;
-	v3 up;
+	vec3 position;
+	vec3 lookat;
+	vec3 up;
 }camera;
 
-camera new_camera(v3 p, v3 l, v3 u);
+camera new_camera(vec3 p, vec3 l, vec3 u);
 
 #endif

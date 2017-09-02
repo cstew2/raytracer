@@ -4,15 +4,12 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
-#include <stdbool.h>
 
-#include "render.h"
-
-const char *GL_LOG_FILE = "gl.log";
+#include "render/render.h"
+#include "debug/debug.h"
 
 // global to use in timer code later
-static double previous_seconds;
-GLFWwindow *window;
+double previous_seconds;
 const GLubyte *renderer;
 const GLubyte *version;
 
@@ -27,63 +24,10 @@ GLuint fs;
 int g_gl_width = 640;
 int g_gl_height = 480;
 
-bool restart_gl_log(void)
-{
-	time_t now;
-	char *date;
-	FILE *file = fopen(GL_LOG_FILE, "w");
-
-	if (!file) {
-		fprintf(stderr, "ERROR: could not open GL_LOG_FILE log file %s for writing\n",
-			 GL_LOG_FILE);
-		return false;
-	}
-	now = time(NULL);
-	date = ctime(&now);
-	fprintf(file, "GL_LOG_FILE log. local time %s", date);
-	fprintf(file, "build version: %s %s\n\n", __DATE__, __TIME__);
-	fclose(file);
-	return true;
-}
-
-bool gl_log(const char *message, ...)
-{
-	va_list argptr;
-	FILE *file = fopen(GL_LOG_FILE, "a");
-	if (!file) {
-		fprintf(stderr, "ERROR: could not open GL_LOG_FILE %s file for appending\n",
-			 GL_LOG_FILE);
-		return false;
-	}
-	va_start(argptr, message);
-	vfprintf(file, message, argptr);
-	va_end(argptr);
-	fclose(file);
-	return true;
-}
-
-bool gl_log_err(const char *message, ...)
-{
-	va_list argptr;
-	FILE *file = fopen(GL_LOG_FILE, "a");
-	if (!file) {
-		fprintf(stderr, "ERROR: could not open GL_LOG_FILE %s file for appending\n",
-			 GL_LOG_FILE);
-		return false;
-	}
-	va_start(argptr, message);
-	vfprintf(file, message, argptr);
-	va_end(argptr);
-	va_start(argptr, message);
-	vfprintf(stderr, message, argptr);
-	va_end(argptr);
-	fclose(file);
-	return true;
-}
 
 void glfw_error_callback( int error, const char *description )
 {
-	gl_log_err("GLFW ERROR: code %i msg: %s\n", error, description);
+	log_msg(ERROR, "GLFW ERROR: code %i msg: %s\n", error, description);
 }
 
 void glfw_window_size_callback( GLFWwindow *w, int width, int height )
@@ -95,53 +39,6 @@ void glfw_window_size_callback( GLFWwindow *w, int width, int height )
 	/* update any perspective matrices used here */
 }
 
-void log_gl_params(void)
-{
-	GLenum params[] = {
-		GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
-		GL_MAX_CUBE_MAP_TEXTURE_SIZE,
-		GL_MAX_DRAW_BUFFERS,
-		GL_MAX_FRAGMENT_UNIFORM_COMPONENTS,
-		GL_MAX_TEXTURE_IMAGE_UNITS,
-		GL_MAX_TEXTURE_SIZE,
-		GL_MAX_VARYING_FLOATS,
-		GL_MAX_VERTEX_ATTRIBS,
-		GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,
-		GL_MAX_VERTEX_UNIFORM_COMPONENTS,
-		GL_MAX_VIEWPORT_DIMS,
-		GL_STEREO,
-	};
-	const char *names[] = {
-		"GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS",
-		"GL_MAX_CUBE_MAP_TEXTURE_SIZE",
-		"GL_MAX_DRAW_BUFFERS",
-		"GL_MAX_FRAGMENT_UNIFORM_COMPONENTS",
-		"GL_MAX_TEXTURE_IMAGE_UNITS",
-		"GL_MAX_TEXTURE_SIZE",
-		"GL_MAX_VARYING_FLOATS",
-		"GL_MAX_VERTEX_ATTRIBS",
-		"GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS",
-		"GL_MAX_VERTEX_UNIFORM_COMPONENTS",
-		"GL_MAX_VIEWPORT_DIMS",
-		"GL_STEREO",
-	};
-	gl_log("GL Context Params:\n");
-	// integers - only works if the order is 0-10 integer return types
-	for (int i = 0; i < 10; i++) {
-		int v = 0;
-		glGetIntegerv(params[i], &v);
-		gl_log("%s %i\n", names[i], v);
-	}
-	// others
-	int v[2];
-	v[0] = v[1] = 0;
-	glGetIntegerv(params[10], v);
-	gl_log("%s %i %i\n", names[10], v[0], v[1]);
-	unsigned char s = 0;
-	glGetBooleanv( params[11], &s);
-	gl_log("%s %i\n", names[11], (unsigned int) );
-	gl_log("-----------------------------\n");
-}
 
 /* we will use this function to update the window title with a frame rate */
 void update_fps_counter(GLFWwindow *w)
@@ -184,9 +81,8 @@ int gl_init(void)
 		"	frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
 		"}";
 
-	restart_gl_log();
 	// start GL context and O/S window using the GLFW helper library
-	gl_log("starting GLFW\n%s\n", glfwGetVersionString());
+	log_msg(INFO, "starting GLFW\n%s\n", glfwGetVersionString());
 	// register the error call-back function that we wrote, above
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit()) {
@@ -204,7 +100,7 @@ int gl_init(void)
 
 	window = glfwCreateWindow(g_gl_width, g_gl_height, "Extended Init.", NULL, NULL);
 	if (!window) {
-		fprintf(stderr, "ERROR: could not open window with GLFW3\n");
+		log_msg(ERROR, "ERROR: could not open window with GLFW3\n");
 		glfwTerminate();
 		return 1;
 	}
@@ -218,9 +114,9 @@ int gl_init(void)
 	// get version info
 	renderer = glGetString(GL_RENDERER); // get renderer string
 	version = glGetString(GL_VERSION);	 // version as a string
-	printf("Renderer: %s\n", renderer);
-	printf("OpenGL version supported %s\n", version);
-	gl_log("renderer: %s\nversion: %s\n", renderer, version);
+	log_msg(INFO, "Renderer: %s\n", renderer);
+	log_msg(INFO, "OpenGL version supported %s\n", version);
+	log_msg(INFO, "renderer: %s\nversion: %s\n", renderer, version);
 	log_gl_params();
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
 	glEnable( GL_DEPTH_TEST ); // enable depth-testing
@@ -252,32 +148,29 @@ int gl_init(void)
 
 int gl_render(void)
 {
-	init();
-
 	previous_seconds = glfwGetTime();
-	while (!glfwWindowShouldClose( window)) {
-		update_fps_counter( window );
-		// wipe the drawing surface clear
-		glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, g_gl_width, g_gl_height);
+	update_fps_counter(window);
+	glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, g_gl_width, g_gl_height);
+	glUseProgram(shader_programme);
+	glBindVertexArray(vao);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glfwSwapBuffers(window);
 
-		glUseProgram(shader_programme);
-		glBindVertexArray(vao);
-		// draw points 0-3 from the currently bound VAO with current in-use shader
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// update other events like input handling
-		glfwPollEvents();
-		if (GLFW_PRESS == glfwGetKey( window, GLFW_KEY_ESCAPE)) {
-			glfwSetWindowShouldClose( window, 1);
-		}
-		// put the stuff we've been drawing onto the display
-		glfwSwapBuffers(window);
-	}
-
-	// close GL context and any other GLFW resources
-	glfwTerminate();
 	return 0;
+}
+
+void gl_input(void)
+{	glfwPollEvents();
+	if (GLFW_PRESS == glfwGetKey( window, GLFW_KEY_ESCAPE)) {
+		glfwSetWindowShouldClose( window, 1);
+	}
+}
+
+void gl_cleanup(void)
+{
+	glfwTerminate();
 }
 
 int load_texture(canvas *c, GLuint *tex)
@@ -307,4 +200,53 @@ canvas new_canvas(int width, int height, colour *c)
 	cv.height = height;
 	cv.screen = c;
 	return cv;
+}
+
+
+void log_gl_params(void)
+{
+	GLenum params[] = {
+		GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,
+		GL_MAX_CUBE_MAP_TEXTURE_SIZE,
+		GL_MAX_DRAW_BUFFERS,
+		GL_MAX_FRAGMENT_UNIFORM_COMPONENTS,
+		GL_MAX_TEXTURE_IMAGE_UNITS,
+		GL_MAX_TEXTURE_SIZE,
+		GL_MAX_VARYING_FLOATS,
+		GL_MAX_VERTEX_ATTRIBS,
+		GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,
+		GL_MAX_VERTEX_UNIFORM_COMPONENTS,
+		GL_MAX_VIEWPORT_DIMS,
+		GL_STEREO,
+	};
+	const char *names[] = {
+		"GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS",
+		"GL_MAX_CUBE_MAP_TEXTURE_SIZE",
+		"GL_MAX_DRAW_BUFFERS",
+		"GL_MAX_FRAGMENT_UNIFORM_COMPONENTS",
+		"GL_MAX_TEXTURE_IMAGE_UNITS",
+		"GL_MAX_TEXTURE_SIZE",
+		"GL_MAX_VARYING_FLOATS",
+		"GL_MAX_VERTEX_ATTRIBS",
+		"GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS",
+		"GL_MAX_VERTEX_UNIFORM_COMPONENTS",
+		"GL_MAX_VIEWPORT_DIMS",
+		"GL_STEREO",
+	};
+	log_msg(INFO, "GL Context Params:\n");
+	// integers - only works if the order is 0-10 integer return types
+	for (int i = 0; i < 10; i++) {
+		int v = 0;
+		glGetIntegerv(params[i], &v);
+		log_msg(INFO, "%s %i\n", names[i], v);
+	}
+	// others
+	int v[2];
+	v[0] = v[1] = 0;
+	glGetIntegerv(params[10], v);
+	log_msg(INFO, "%s %i %i\n", names[10], v[0], v[1]);
+	unsigned char s = 0;
+	glGetBooleanv( params[11], &s);
+	log_msg(INFO, "%s %i\n", names[11], (unsigned int)s);
+	log_msg(INFO, "-----------------------------\n");
 }

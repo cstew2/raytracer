@@ -1,10 +1,10 @@
 TARGET          = raytracer
 
-MODULES         = main math world render voxel
+MODULES         = main math world render voxel debug
 
 CC              = gcc
 
-CFLAGS          := -std=c99 -I./
+CFLAGS          := -std=c11 -I./
 
 DCFLAGS         := -g -ggdb3 -O0 -Wall -pedantic -Wextra -Wundef -Wshadow \
                    -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wwrite-strings \
@@ -39,7 +39,7 @@ build: $(OBJ)
 
 .PHONY: clean
 clean:
-	@rm -f $(OBJ) $(TARGET) core raytracer_gl.log
+	@rm -f $(OBJ) $(TARGET) core raytracer.log
 	@echo Cleaned $(OBJ) and $(TARGET)
 
 .PHONY: rebuild

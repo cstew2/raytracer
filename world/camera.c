@@ -1,6 +1,6 @@
 #include "camera.h"
 
-camera new_camera(v3 p, v3 l, v3 u)
+camera new_camera(vec3 p, vec3 l, vec3 u)
 {
 	camera c;
 	c.position = p;
