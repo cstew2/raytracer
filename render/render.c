@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 
 #include "render/render.h"
 #include "debug/debug.h"
@@ -43,7 +44,7 @@ void glfw_window_size_callback( GLFWwindow *w, int width, int height )
 /* we will use this function to update the window title with a frame rate */
 void update_fps_counter(GLFWwindow *w)
 {
-	char tmp[128];
+	char tmp[32];
 
 	static int frame_count;
 
@@ -53,7 +54,7 @@ void update_fps_counter(GLFWwindow *w)
 		previous_seconds = current_seconds;
 
 		double fps = (double)frame_count / elapsed_seconds;
-		sprintf(tmp, "opengl @ fps: %.2f", fps);
+		sprintf(tmp, "Raytracer @ fps: %.2f", fps);
 		glfwSetWindowTitle( w, tmp);
 		frame_count = 0;
 	}
@@ -62,31 +63,35 @@ void update_fps_counter(GLFWwindow *w)
 
 int gl_init(void)
 {
-	GLfloat points[] = {1.0f, 1.0f, 0.0f,
-			    1.0f, -1.0f, 0.0f,
-			    -1.0f, 1.0f, 0.0f,
-			    1.0f, -1.0f, 0.0f,
-			    -1.0f, 1.0f, 0.0f,
-			    -1.0f, -1.0f, 0.0f};
-
-	const char *vertex_shader = "#version 130\n"
-		"in vec3 vp;"
-		"void main () {"
-		"	gl_Position = vec4 (vp, 1.0);"
-		"}";
-
-	const char *fragment_shader = "#version 130\n"
-		"out vec4 frag_colour;"
-		"void main () {"
-		"	frag_colour = vec4 (0.5, 0.0, 0.5, 1.0);"
-		"}";
-
+	const GLfloat points[] = {1.0f, 1.0f, 0.0f,
+				  1.0f, -1.0f, 0.0f,
+				  -1.0f, 1.0f, 0.0f,
+				  1.0f, -1.0f, 0.0f,
+				  -1.0f, 1.0f, 0.0f,
+				  -1.0f, -1.0f, 0.0f};
+	
+	GLchar const *vertex_shader;
+	GLchar const *fragment_shader;
+	
+	const char *shader_version_string = (char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
+	int shader_version = atoi(shader_version_string);
+	
+	if(shader_version == 130) {
+		vertex_shader = load_shader("./render/shader/raytracer_130.vert");
+		fragment_shader = load_shader("./render/shader/raytracer_130.frag");
+	}
+	
+	else if(shader_version == 450 ) {
+		vertex_shader = load_shader("./render/shader/raytracer_450.vert");
+		fragment_shader = load_shader("./render/shader/raytracer_450.frag");
+	}
+	
 	// start GL context and O/S window using the GLFW helper library
 	log_msg(INFO, "starting GLFW\n%s\n", glfwGetVersionString());
 	// register the error call-back function that we wrote, above
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit()) {
-		fprintf(stderr, "ERROR: could not start GLFW3\n");
+		log_msg(ERROR, "could not start GLFW3\n");
 		return 1;
 	}
 
@@ -100,7 +105,7 @@ int gl_init(void)
 
 	window = glfwCreateWindow(g_gl_width, g_gl_height, "Extended Init.", NULL, NULL);
 	if (!window) {
-		log_msg(ERROR, "ERROR: could not open window with GLFW3\n");
+		log_msg(ERROR, "could not open window with GLFW3\n");
 		glfwTerminate();
 		return 1;
 	}
@@ -143,6 +148,9 @@ int gl_init(void)
 	glAttachShader(shader_programme, vs);
 	glLinkProgram(shader_programme);
 
+	free((GLchar *)vertex_shader);
+	free((GLchar *)fragment_shader);
+	
 	return 0;
 }
 
@@ -249,4 +257,29 @@ void log_gl_params(void)
 	glGetBooleanv( params[11], &s);
 	log_msg(INFO, "%s %i\n", names[11], (unsigned int)s);
 	log_msg(INFO, "-----------------------------\n");
+}
+
+GLchar const *load_shader(const char *filename)
+{
+	if(filename == NULL) {
+		log_msg(WARN, "no file given to load\n");
+		return NULL;
+	}
+	FILE *f = NULL;
+	size_t size;
+	f = fopen(filename, "r");
+	if(f == NULL) {
+		log_msg(WARN, "Improper path given to load file\n");
+		return NULL;
+	}
+	
+	fseek(f, 0, SEEK_END);
+	size = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	
+	GLchar *file_buffer = calloc(size, sizeof(GLchar));
+	fread(file_buffer, 1, size, f);
+	fclose(f);
+
+	return file_buffer;	
 }

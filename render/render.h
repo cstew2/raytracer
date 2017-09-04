@@ -30,5 +30,6 @@ void glfw_error_callback(int error, const char *description);
 bool gl_log_err(const char *message, ...);
 bool gl_log(const char *message, ...);
 bool restart_gl_log(void);
+GLchar const *load_shader(const char *filename);
 
 #endif

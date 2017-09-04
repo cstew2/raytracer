@@ -1,10 +1,13 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
+#include <string.h>
 
 #include "debug.h"
 
 FILE *LOG_FP;
+time_t LOG_NOW;
+char *LOG_DATE;
 
 signed char DEBUG_ON = 0;
 
@@ -12,8 +15,8 @@ const char *LOG_FILE = "./raytracer.log";
 
 void log_init(void)
 {
-	time_t now = 0;
-	char *date = NULL;
+	LOG_NOW = 0;
+	LOG_DATE = NULL;
 	LOG_FP = NULL;
 	LOG_FP = fopen(LOG_FILE, "a");
 	if(LOG_FP == NULL) {
@@ -21,9 +24,9 @@ void log_init(void)
 		return;
 	}
 	DEBUG_ON = 1;
-	now = time(NULL);
-	date = ctime(&now);
-	log_msg(INFO, "Opened Log file: %s at local system time: %s\n", LOG_FILE, date);
+	LOG_NOW = time(NULL);
+	LOG_DATE = ctime(&LOG_NOW);
+	log_msg(INFO, "Opened Log file: %s at local system time: %s\n", LOG_FILE, LOG_DATE);
 }
 
 void log_term(void)
@@ -49,19 +52,34 @@ void log_msg(LOG_LEVEL level, const char *fmt, ...)
 		if(fmt != NULL) {
 			va_list args;
 			va_start(args, fmt);
-			char *mod_fmt = malloc((sizeof(char) * strlen(fmt)) + 6);
+			LOG_NOW = time(NULL);
+			LOG_DATE = ctime(&LOG_NOW);
+			char *mod_fmt = malloc((sizeof(char) * strlen(fmt)) +
+					       (sizeof(char) * 12) +
+					       (sizeof(char) * strlen(LOG_DATE)));
 			switch(level) {
  			case INFO:
-				strcat(mod_fmt, );
+				strcpy(mod_fmt, LOG_DATE);
+				strcat(mod_fmt, " - INFO: ");
+				strcat(mod_fmt, fmt);
 				vfprintf(stdout, mod_fmt, args);
 				break;
 			case WARN:
+				strcpy(mod_fmt, LOG_DATE);
+				strcat(mod_fmt, " - WARN: ");
+				strcat(mod_fmt, fmt);
 				vfprintf(stdout, mod_fmt, args);
 				break;
 			case ERROR:
+				strcpy(mod_fmt, LOG_DATE);
+				strcat(mod_fmt, " - ERROR: ");
+				strcat(mod_fmt, fmt);
 				vfprintf(stderr, mod_fmt, args);
 				break;
-			case default:
+			default:
+				strcpy(mod_fmt, LOG_DATE);
+				strcat(mod_fmt, " - INFO: ");
+				strcat(mod_fmt, fmt);
 				vfprintf(stdout, mod_fmt, args);
 				break;
 			}
