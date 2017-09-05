@@ -53,7 +53,7 @@ void log_msg(LOG_LEVEL level, const char *fmt, ...)
 			va_list args;
 			va_start(args, fmt);
 			LOG_NOW = time(NULL);
-			LOG_DATE = ctime(&LOG_NOW);
+			LOG_DATE = strtok(ctime(&LOG_NOW), "\n");
 			char *mod_fmt = malloc((sizeof(char) * strlen(fmt)) +
 					       (sizeof(char) * 12) +
 					       (sizeof(char) * strlen(LOG_DATE)));
