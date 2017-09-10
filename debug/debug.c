@@ -26,7 +26,7 @@ void log_init(void)
 	DEBUG_ON = 1;
 	LOG_NOW = time(NULL);
 	LOG_DATE = ctime(&LOG_NOW);
-	log_msg(INFO, "Opened Log file: %s at local system time: %s\n", LOG_FILE, LOG_DATE);
+	log_msg(INFO, "Opened Log file: %s", LOG_FILE);
 }
 
 void log_term(void)

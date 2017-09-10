@@ -19,7 +19,6 @@ include         $(patsubst %, %/module.mk, $(MODULES))
 
 OBJ             := $(patsubst %.c,%.o, $(filter %.c,$(SRC)))
 
-
 .PHONY: debug
 debug: CFLAGS += $(DCFLAGS)
 debug: build
