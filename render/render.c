@@ -36,7 +36,7 @@ void glfw_window_size_callback( GLFWwindow *w, int width, int height )
         glfwSetWindowSize(w, width, height);
 	g_gl_width = width;
 	g_gl_height = height;
-	printf("width %i height %i\n", width, height);
+	log_msg(INFO, "width: %i height: %i\n", width, height);
 	/* update any perspective matrices used here */
 }
 
@@ -72,9 +72,12 @@ int gl_init(void)
 	
 	GLchar const *vertex_shader;
 	GLchar const *fragment_shader;
-	
+
+	int shader_version = 130;
 	const char *shader_version_string = (char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
-	int shader_version = atoi(shader_version_string);
+	if(shader_version_string) {
+		shader_version = atoi(shader_version_string);
+	}
 	
 	if(shader_version == 130) {
 		vertex_shader = load_shader("./render/shader/raytracer_130.vert");
@@ -87,7 +90,7 @@ int gl_init(void)
 	}
 	
 	// start GL context and O/S window using the GLFW helper library
-	log_msg(INFO, "starting GLFW\n%s\n", glfwGetVersionString());
+	log_msg(INFO, "starting GLFW: %s\n", glfwGetVersionString());
 	// register the error call-back function that we wrote, above
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit()) {
@@ -121,7 +124,7 @@ int gl_init(void)
 	version = glGetString(GL_VERSION);	 // version as a string
 	log_msg(INFO, "Renderer: %s\n", renderer);
 	log_msg(INFO, "OpenGL version supported %s\n", version);
-	log_msg(INFO, "renderer: %s\nversion: %s\n", renderer, version);
+	log_msg(INFO, "renderer: %s version: %s\n", renderer, version);
 	log_gl_params();
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
 	glEnable( GL_DEPTH_TEST ); // enable depth-testing

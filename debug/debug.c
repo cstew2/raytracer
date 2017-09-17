@@ -26,7 +26,7 @@ void log_init(void)
 	DEBUG_ON = 1;
 	LOG_NOW = time(NULL);
 	LOG_DATE = ctime(&LOG_NOW);
-	log_msg(INFO, "Opened Log file: %s", LOG_FILE);
+	log_msg(INFO, "Opened Log file: %s\n", LOG_FILE);
 }
 
 void log_term(void)
@@ -51,12 +51,16 @@ void log_msg(LOG_LEVEL level, const char *fmt, ...)
 	if(DEBUG_ON) {
 		if(fmt != NULL) {
 			va_list args;
+			va_list file_args;
 			va_start(args, fmt);
+			va_copy(file_args, args);
+			
 			LOG_NOW = time(NULL);
 			LOG_DATE = strtok(ctime(&LOG_NOW), "\n");
-			char *mod_fmt = malloc((sizeof(char) * strlen(fmt)) +
-					       (sizeof(char) * 12) +
-					       (sizeof(char) * strlen(LOG_DATE)));
+			int size = ((sizeof(char) * strlen(fmt)) +
+				    (sizeof(char) * 12) +
+				    (sizeof(char) * strlen(LOG_DATE)));
+			char *mod_fmt = malloc(size);
 			switch(level) {
  			case INFO:
 				strcpy(mod_fmt, LOG_DATE);
@@ -83,10 +87,12 @@ void log_msg(LOG_LEVEL level, const char *fmt, ...)
 				vfprintf(stdout, mod_fmt, args);
 				break;
 			}
-			if(LOG_FP != NULL) {
-				vfprintf(LOG_FP, mod_fmt, args);
-			}
 			va_end(args);
+			if(LOG_FP != NULL) {
+			        vfprintf(LOG_FP, mod_fmt, file_args); 
+			}
+			va_end(file_args);
+			free(mod_fmt);
 		}
 	}
 }
