@@ -2,13 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 #include "main/main.h"
 #include "debug/debug.h"
 #include "main/config.h"
-#include "render/render.h"
+
+#include "render/gl_render.h"
+#include "render/vk_render.h"
 
 int main(int argc, char **argv)
 {

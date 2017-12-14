@@ -6,7 +6,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "render/render.h"
+#include "render/gl_render.h"
 #include "debug/debug.h"
 
 // global to use in timer code later

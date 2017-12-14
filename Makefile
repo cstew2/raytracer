@@ -19,7 +19,10 @@ include         $(patsubst %, %/module.mk, $(MODULES))
 
 OBJ             := $(patsubst %.c,%.o, $(filter %.c,$(SRC)))
 
-.PHONY: debug
+.PHONY: default
+default:debug
+
+.PHONY: debug 
 debug: CFLAGS += $(DCFLAGS)
 debug: build
 
@@ -42,4 +45,4 @@ clean:
 	@echo Cleaned $(OBJ) and $(TARGET)
 
 .PHONY: rebuild
-rebuild: clean build
+rebuild: clean default

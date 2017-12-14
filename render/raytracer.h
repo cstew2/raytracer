@@ -5,7 +5,6 @@
 #include "voxel/dag.h"
 #include "world/colour.h"
 #include "world/camera.h"
-#include "render/render.h"
 
 typedef struct {
 	vec3 pos;
