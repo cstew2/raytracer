@@ -106,7 +106,7 @@ int gl_init(void)
 	  vmode->width, vmode->height, "Extended GL Init", mon, NULL
 	  );*/
 
-	window = glfwCreateWindow(g_gl_width, g_gl_height, "Extended Init.", NULL, NULL);
+	window = glfwCreateWindow(g_gl_width, g_gl_height, "Voxel Raytracer", NULL, NULL);
 	if (!window) {
 		log_msg(ERROR, "could not open window with GLFW3\n");
 		glfwTerminate();
