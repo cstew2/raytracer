@@ -80,13 +80,13 @@ int gl_init(void)
 	}
 	
 	if(shader_version == 130) {
-		vertex_shader = load_shader("./render/shader/raytracer_130.vert");
-		fragment_shader = load_shader("./render/shader/raytracer_130.frag");
+		vertex_shader = load_shader("./render/shaders/raytracer_130.vert");
+		fragment_shader = load_shader("./render/shaders/raytracer_130.frag");
 	}
 	
 	else if(shader_version == 450 ) {
-		vertex_shader = load_shader("./render/shader/raytracer_450.vert");
-		fragment_shader = load_shader("./render/shader/raytracer_450.frag");
+		vertex_shader = load_shader("./render/shaders/raytracer_450.vert");
+		fragment_shader = load_shader("./render/shaders/raytracer_450.frag");
 	}
 	
 	// start GL context and O/S window using the GLFW helper library
