@@ -6,6 +6,7 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include "render/render.h"
 #include "render/gl_render.h"
 #include "debug/debug.h"
 
@@ -21,24 +22,6 @@ GLuint shader_programme;
 
 GLuint vs;
 GLuint fs;
-
-int g_gl_width = 640;
-int g_gl_height = 480;
-
-
-void glfw_error_callback( int error, const char *description )
-{
-	log_msg(ERROR, "GLFW ERROR: code %i msg: %s\n", error, description);
-}
-
-void glfw_window_size_callback( GLFWwindow *w, int width, int height )
-{
-        glfwSetWindowSize(w, width, height);
-	g_gl_width = width;
-	g_gl_height = height;
-	log_msg(INFO, "width: %i height: %i\n", width, height);
-	/* update any perspective matrices used here */
-}
 
 
 /* we will use this function to update the window title with a frame rate */
@@ -106,7 +89,7 @@ int gl_init(void)
 	  vmode->width, vmode->height, "Extended GL Init", mon, NULL
 	  );*/
 
-	window = glfwCreateWindow(g_gl_width, g_gl_height, "Voxel Raytracer", NULL, NULL);
+	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL - Voxel Raytracer", NULL, NULL);
 	if (!window) {
 		log_msg(ERROR, "could not open window with GLFW3\n");
 		glfwTerminate();
@@ -127,8 +110,8 @@ int gl_init(void)
 	log_msg(INFO, "renderer: %s version: %s\n", renderer, version);
 	log_gl_params();
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
-	glEnable( GL_DEPTH_TEST ); // enable depth-testing
-	glDepthFunc( GL_LESS );		 // depth-testing interprets a smaller value as "closer"
+	glEnable(GL_DEPTH_TEST); // enable depth-testing
+	glDepthFunc(GL_LESS);		 // depth-testing interprets a smaller value as "closer"
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -163,7 +146,7 @@ int gl_render(void)
 	update_fps_counter(window);
 	glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glViewport(0, 0, g_gl_width, g_gl_height);
+	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glUseProgram(shader_programme);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -173,7 +156,8 @@ int gl_render(void)
 }
 
 void gl_input(void)
-{	glfwPollEvents();
+{
+	glfwPollEvents();
 	if (GLFW_PRESS == glfwGetKey( window, GLFW_KEY_ESCAPE)) {
 		glfwSetWindowShouldClose( window, 1);
 	}

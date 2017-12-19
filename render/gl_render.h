@@ -1,5 +1,5 @@
-#ifndef _PAINT_H_
-#define _PAINT_H_
+#ifndef __GL_RENDER_H__
+#define __GL_RENDER_H__
 
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
@@ -21,12 +21,9 @@ int gl_init(void);
 void gl_cleanup(void);
 void gl_input(void);
 
-	
-int load_texture(canvas *c, GLuint *tex);
 void update_fps_counter(GLFWwindow *w);
+int load_texture(canvas *c, GLuint *tex);
 void log_gl_params(void);
-void glfw_window_size_callback(GLFWwindow *, int width, int height);
-void glfw_error_callback(int error, const char *description);
 bool gl_log_err(const char *message, ...);
 bool gl_log(const char *message, ...);
 bool restart_gl_log(void);
