@@ -63,6 +63,16 @@ void create_instance(void) {
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 
+        uint32_t glfwExtensionCount = 0;
+        const char** glfwExtensions;
+        glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+
+        createInfo.enabledExtensionCount = glfwExtensionCount;
+        createInfo.ppEnabledExtensionNames = glfwExtensions;
+
+        createInfo.enabledLayerCount = 0;
+
+
         if (vkCreateInstance(&createInfo, NULL, &instance) != VK_SUCCESS) {
 		log_msg(ERROR, "failed to create instance!");
         }

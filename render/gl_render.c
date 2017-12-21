@@ -27,7 +27,7 @@ GLuint fs;
 /* we will use this function to update the window title with a frame rate */
 void update_fps_counter(GLFWwindow *w)
 {
-	char tmp[32];
+	char tmp[64];
 
 	static int frame_count;
 
@@ -37,8 +37,8 @@ void update_fps_counter(GLFWwindow *w)
 		previous_seconds = current_seconds;
 
 		double fps = (double)frame_count / elapsed_seconds;
-		sprintf(tmp, "Raytracer @ fps: %.2f", fps);
-		glfwSetWindowTitle( w, tmp);
+		sprintf(tmp, "OpenGL - Raytracer @ fps: %.2f", fps);
+		glfwSetWindowTitle(w, tmp);
 		frame_count = 0;
 	}
 	frame_count++;
