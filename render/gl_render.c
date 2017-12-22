@@ -73,11 +73,11 @@ int gl_init(void)
 	}
 	
 	// start GL context and O/S window using the GLFW helper library
-	log_msg(INFO, "starting GLFW: %s\n", glfwGetVersionString());
+	log_msg(INFO, "Starting GLFW: %s\n", glfwGetVersionString());
 	// register the error call-back function that we wrote, above
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit()) {
-		log_msg(ERROR, "could not start GLFW3\n");
+		log_msg(ERROR, "Could not start GLFW3\n");
 		return 1;
 	}
 
@@ -91,7 +91,7 @@ int gl_init(void)
 
 	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL - Voxel Raytracer", NULL, NULL);
 	if (!window) {
-		log_msg(ERROR, "could not open window with GLFW3\n");
+		log_msg(ERROR, "Could not open window with GLFW3\n");
 		glfwTerminate();
 		return 1;
 	}
@@ -107,7 +107,7 @@ int gl_init(void)
 	version = glGetString(GL_VERSION);	 // version as a string
 	log_msg(INFO, "Renderer: %s\n", renderer);
 	log_msg(INFO, "OpenGL version supported %s\n", version);
-	log_msg(INFO, "renderer: %s version: %s\n", renderer, version);
+	log_msg(INFO, "Renderer: %s version: %s\n", renderer, version);
 	log_gl_params();
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
