@@ -7,6 +7,15 @@
 int WINDOW_HEIGHT = 600;
 int WINDOW_WIDTH = 800;
 
+canvas new_canvas(int width, int height, colour *c)
+{
+	canvas cv;
+	cv.width = width;
+	cv.height = height;
+	cv.screen = c;
+	return cv;
+}
+
 void glfw_error_callback(int error, const char *description)
 {
 	log_msg(ERROR, "GLFW ERROR: code %i msg: %s\n", error, description);

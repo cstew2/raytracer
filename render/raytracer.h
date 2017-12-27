@@ -11,6 +11,9 @@ typedef struct {
 	vec3 dir;
 }ray;
 
+
+
 ray new_ray(vec3 p, vec3 d);
+void update(void);
 
 #endif

@@ -4,17 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 
-#include "world/colour.h"
+#include "render/render.h"
 
-typedef struct {
-	int width;
-	int height;
-	colour *screen;
-}canvas;
-
-GLFWwindow *window;
-
-canvas new_canvas(int width, int height, colour *c);
 
 int gl_render(void);
 int gl_init(void);

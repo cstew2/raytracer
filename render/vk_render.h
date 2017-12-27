@@ -1,10 +1,9 @@
 #ifndef __VK_RENDER__
 #define __VK_RENDER__
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.h> 
 #include <GLFW/glfw3.h>
 
-GLFWwindow *window;
 VkInstance instance;
 VkSurfaceKHR *surface;
 

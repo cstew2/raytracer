@@ -6,9 +6,10 @@
 #include "main/main.h"
 #include "debug/debug.h"
 #include "main/config.h"
-
+#include "render/render.h"
 #include "render/gl_render.h"
 #include "render/vk_render.h"
+#include "render/raytracer.h"
 
 int main(int argc, char **argv)
 {
@@ -61,7 +62,7 @@ void gl_main_loop(void)
 	gl_init();
 	while(!glfwWindowShouldClose(window)) {
 		gl_input();
-		//gl_update();
+		update();
 		gl_render();
 	}
 }
@@ -71,7 +72,7 @@ void vk_main_loop(void)
 	vk_init();
 	while(!glfwWindowShouldClose(window)) {
 		vk_input();
-		//vk_update();
+		update();
 		vk_render();
 	}
 }

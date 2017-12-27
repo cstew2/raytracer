@@ -7,3 +7,8 @@ ray new_ray(vec3 p, vec3 d)
 	r.dir = d;
 	return r;
 }
+
+void update(void)
+{
+	
+}

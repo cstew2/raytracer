@@ -6,7 +6,6 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include "render/render.h"
 #include "render/gl_render.h"
 #include "debug/debug.h"
 
@@ -110,8 +109,8 @@ int gl_init(void)
 	log_msg(INFO, "Renderer: %s version: %s\n", renderer, version);
 	log_gl_params();
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
-	glEnable(GL_DEPTH_TEST); // enable depth-testing
-	glDepthFunc(GL_LESS);		 // depth-testing interprets a smaller value as "closer"
+	//glEnable(GL_DEPTH_TEST); // enable depth-testing
+	//glDepthFunc(GL_LESS);		 // depth-testing interprets a smaller value as "closer"
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -136,6 +135,8 @@ int gl_init(void)
 
 	free((GLchar *)vertex_shader);
 	free((GLchar *)fragment_shader);
+
+	
 	
 	return 0;
 }
@@ -186,15 +187,6 @@ int load_texture(canvas *c, GLuint *tex)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, max_aniso);
 
 	return 0;
-}
-
-canvas new_canvas(int width, int height, colour *c)
-{
-	canvas cv;
-	cv.width = width;
-	cv.height = height;
-	cv.screen = c;
-	return cv;
 }
 
 
