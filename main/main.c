@@ -6,7 +6,6 @@
 #include "main/main.h"
 #include "debug/debug.h"
 #include "main/config.h"
-#include "render/render.h"
 #include "render/gl_render.h"
 #include "render/vk_render.h"
 #include "render/raytracer.h"

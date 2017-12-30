@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "vk_render.h"
 
 #include "render/render.h"
@@ -40,6 +42,7 @@ void vk_cleanup(void)
 void create_instance(void)
 {
 	VkApplicationInfo appInfo;
+	memset(&appInfo, 0, sizeof(VkApplicationInfo));
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         appInfo.pApplicationName = "Vulkan Raytracer";
         appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -48,6 +51,7 @@ void create_instance(void)
         appInfo.apiVersion = VK_API_VERSION_1_0;
 
         VkInstanceCreateInfo createInfo;
+	memset(&createInfo, 0, sizeof(VkInstanceCreateInfo));
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 

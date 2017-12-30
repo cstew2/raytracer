@@ -4,6 +4,8 @@
 #include <vulkan/vulkan.h> 
 #include <GLFW/glfw3.h>
 
+#include "render/raytracer.h"
+
 VkInstance instance;
 VkSurfaceKHR *surface;
 

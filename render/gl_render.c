@@ -9,7 +9,6 @@
 #include "render/gl_render.h"
 #include "debug/debug.h"
 
-// global to use in timer code later
 double previous_seconds;
 const GLubyte *renderer;
 const GLubyte *version;
@@ -135,8 +134,6 @@ int gl_init(void)
 
 	free((GLchar *)vertex_shader);
 	free((GLchar *)fragment_shader);
-
-	
 	
 	return 0;
 }

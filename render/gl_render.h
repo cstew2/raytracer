@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 #include "render/render.h"
-
+#include "render/raytracer.h"
 
 int gl_render(void);
 int gl_init(void);
