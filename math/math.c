@@ -30,3 +30,29 @@ float fast_sqrt(float x)
 	val += 1 << 29;
 	return *(float*)&val;
 }
+
+float clamp(float x, float min, float max)
+{
+	return x < min ? min : max;
+}
+
+float maxf(float x, float y)
+{
+	return x > y ? x : y;
+}
+
+float minf(float x, float y)
+{
+	return x < y ? x : y;
+}
+
+int max(int x, int y)
+{
+	return x > y ? x : y;
+}
+
+int min(int x, int y)
+{
+	return x < y ? x : y;
+}
+

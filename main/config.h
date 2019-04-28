@@ -1,30 +1,40 @@
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
-#define BUFFER_LEN 64
-#define CONFIG_COUNT 3
+#include <stdbool.h>
 
-typedef enum {INT, FLOAT, STRING} type;
+static const int BUFFER_LEN = 64;
 
 typedef struct {
-	char name[BUFFER_LEN];
-	type t;
-	union {
-		int i;
-		float f;
-		char *s;
-	};
-}config_element;
+	//rendering
+	float fov;
+	float draw_distance;
+	unsigned int max_depth;
+	float bias;
 
-static const config_element config_defaults[CONFIG_COUNT] = {
-	{"fov", INT, {0}},
-	{"draw_distance", FLOAT, {200.0}},
-	{"", INT, {0}}
+	//window
+	unsigned int width;
+	unsigned int height;
+	bool fullscreen;
+	unsigned int fps;
+}config;
+
+static const config config_defaults = {
+	//rendering
+	90.0,
+	200.0,
+	5,
+	0.1,
+	
+	//window
+	2000,
+	1000,
+	false,
+	120
 };
 
 char *get_file(const char *filename);
-config_element *parser(char *file_data);
-
-
+config parser(char *file_data);
+config default_config(void);
 
 #endif

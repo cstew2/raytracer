@@ -1,22 +1,15 @@
-#ifndef __VK_RENDER__
-#define __VK_RENDER__
-
-#include <vulkan/vulkan.h> 
-#include <GLFW/glfw3.h>
+#ifndef __VK_RENDER_H__
+#define __VK_RENDER_H__
 
 #include "render/raytracer.h"
 
-VkInstance instance;
-VkSurfaceKHR *surface;
+void vk_realtime_render(raytracer rt);
 
+void vk_init(config *c);
+void vk_term(void);
 
-void vk_init(void);
-void vk_cleanup(void);
-
-void vk_input(void);
 void vk_render(void);
-
-void create_instance(void);
-
+void vk_update(void);
+void vk_input(void);
 
 #endif

@@ -1,7 +1,6 @@
-#ifndef _MAIN_H_
-#define _MAIN_H_
+#ifndef __MAIN_H__
+#define __MAIN_H__
 
-void gl_main_loop(void);
-void vk_main_loop(void);
+void print_help(void);
 
 #endif

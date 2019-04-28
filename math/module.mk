@@ -1,4 +1,7 @@
-SRC	+= $(wildcard math/*.c)
-INC	+= $(wildcard math/*.h)
+SRC		+= $(wildcard math/*.c)
+INC		+= $(wildcard math/*.h)
 
-LIBS	+= -lm
+CUSRC		+= $(wildcard math/*.cu)
+CUINC		+= $(wildcard math/*.cuh)
+
+LIBS		+= -lm

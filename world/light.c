@@ -1,9 +1,11 @@
 #include "light.h"
 
-ambient_light new_ambient_light(colour c, float intensity)
+light light_new(colour c, float intensity, vec3 position, vec3 direction)
 {
-	ambient_light l;
+	light l;
 	l.c = c;
 	l.intensity = intensity;
+	l.position = position;
+	l.direction = direction;
 	return l;
 }

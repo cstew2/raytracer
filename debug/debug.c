@@ -2,6 +2,7 @@
 #include <stdarg.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "debug.h"
 
@@ -9,12 +10,13 @@ FILE *LOG_FP;
 time_t LOG_NOW;
 char *LOG_DATE;
 
-signed char DEBUG_ON = 0;
+bool DEBUG_ON = 0;
 
 const char *LOG_FILE = "./raytracer.log";
 
 void log_init(void)
 {
+	fclose(fopen(LOG_FILE, "w"));
 	LOG_NOW = 0;
 	LOG_DATE = NULL;
 	LOG_FP = NULL;
@@ -23,7 +25,7 @@ void log_init(void)
 		debug_msg("debug messages cannot be written to a file.\n");
 		return;
 	}
-	DEBUG_ON = 1;
+	DEBUG_ON = true;
 	LOG_NOW = time(NULL);
 	LOG_DATE = ctime(&LOG_NOW);
 	log_msg(INFO, "Opened Log file: %s\n", LOG_FILE);

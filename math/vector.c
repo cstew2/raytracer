@@ -1,9 +1,14 @@
 #include <math.h>
 
-#include "vector.h"
+#include "math/vector.h"
 
 const vec3 vec3_origin = {0.0, 0.0, 0.0};
 const vec4 vec4_origin = {0.0, 0.0, 0.0, 0.0};
+
+vec3 vec3_new(const float x, const float y, const float z)
+{
+	return (vec3){x, y, z};
+}
 
 vec3 vec3_add(const vec3 u, const vec3 v)
 {
@@ -64,9 +69,20 @@ vec3 vec3_normalise(const vec3 u)
 	return v;
 }
 
-vec3 new_vec3(const float x, const float y, const float z)
+vec3 vec3_rotation(const vec3 u, const vec3 about, const float theta)
 {
-	return (vec3){x, y, z};
+	vec3 k = vec3_normalise(about);
+	float stheta = sin(theta);
+	float ctheta = cos(theta);
+	return vec3_add(vec3_scale(u, ctheta),
+			vec3_add(vec3_scale(vec3_cross(k, u), stheta),
+			vec3_scale(k, vec3_dot(u, k)*(1-ctheta))));
+}
+
+
+vec4 vec4_new(const float w, const float x, const float y, const float z)
+{
+	return (vec4){w, x, y, z};
 }
 
 vec4 vec4_add(const vec4 u, const vec4 v)
@@ -132,7 +148,3 @@ vec4 vec4_normalise(const vec4 u)
 	return v;
 }
 
-vec4 new_vec4(const float w, const float x, const float y, const float z)
-{
-	return (vec4){w, x, y, z};
-}

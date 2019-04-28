@@ -4,13 +4,12 @@
 #include "world/colour.h"
 #include <GLFW/glfw3.h>
 
-extern int WINDOW_HEIGHT;
-extern int WINDOW_WIDTH;
+int WINDOW_HEIGHT;
+int WINDOW_WIDTH;
 
 GLFWwindow *window;
 
-void glfw_error_callback( int error, const char *description);
-void glfw_window_size_callback(GLFWwindow *, int width, int height);
+void glfw_error_callback(int error, const char *description);
 
 
 #endif

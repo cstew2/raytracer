@@ -1,2 +1,5 @@
 fov = 90
-draw_distance = infinity
+draw_distance = 100
+width = 2000
+height = 1500
+fullscreen = false

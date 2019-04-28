@@ -1,12 +1,12 @@
-#ifndef _COLOR_H_
-#define _COLOR_H_
+#ifndef __COLOUR_H__
+#define __COLOUR_H__
 
 #include <stdint.h>
 
-typedef struct {
-        uint32_t rgba;
-}colour;
+typedef uint32_t colour;
+typedef enum {RED, GREEN, BLUE, ALPHA} channel;
 
-colour new_colour(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+colour colour_new(uint8_t r, uint8_t g, uint8_t b);
+uint8_t get_channel(colour c, channel ch);
 
 #endif
