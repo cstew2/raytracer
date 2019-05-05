@@ -1,0 +1,38 @@
+things to think about:
+-modularising code?
+
+things to improve:
+-make parsing use a structure for names and types of config params
+-table pased parsing? name -> (bool, int, float, etc.)
+
+todo soon:
+-redo how main function works
+      -need to change control flow for lots of stuff
+-generate camera rays in camera.c
+
+-fix camera movement(4x4 matrix transformations?)
+-raytracer ray generation
+-load world scene from file(another parser!)
+-utility to create world scene files
+
+todo later:
+-entities(players, enemies, etc.)
+-animation
+-sound
+-physics
+-collision detection
+-AI
+-events
+-ui
+-options(in game)
+-input interpreter
+-output 
+-multithreading
+	-more general threading
+-scripting language
+-tools(scene making,animation)
+raytracing
+	-threaded implementation
+	-cuda implementation
+-voxels(and SVO)
+-polygon mesh to voxel algo
