@@ -4,7 +4,7 @@
 #include "main/config.h"
 #include "render/raytracer.h"
 
-void file_render(raytracer rt);
+void file_render(raytracer rt, char *filename);
 void write_ppm_file(char *filename, canvas c);
 
 #endif

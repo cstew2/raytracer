@@ -25,7 +25,10 @@ char *get_file(const char *filename)
 	fseek(f, 0, SEEK_SET);
 	
 	char *file_buffer = calloc(size, sizeof(char));
-	fread(file_buffer, 1, size, f);
+	size_t read_size = fread(file_buffer, 1, size, f);
+	if(size != read_size){
+		log_msg(WARN, "Could not read all of config file %s\n", filename);
+	}
 	fclose(f);
 
 	return file_buffer;

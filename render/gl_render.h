@@ -10,16 +10,15 @@
 #include "main/config.h"
 
 void gl_realtime_render(raytracer rt);
-
 GLFWwindow *gl_init(config c);
-void gl_render(void);
+void gl_render(GLFWwindow *window);
 void gl_input(GLFWwindow *window);
 void gl_update(GLFWwindow *window);
 void gl_cleanup(GLFWwindow *window);
 
 void log_gl_params(void);
 void check_gl_error(const char *place);
-void glfw_error_callback(int error, const char *description);
+void gl_glfw_error_callback(int error, const char *description);
 void opengl_debug(GLenum source, GLenum type, GLuint id, GLenum severity,
 		     GLsizei length, const GLchar* message, const void* userParam);
 

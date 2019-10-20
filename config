@@ -1,5 +1,12 @@
+raytrace_method = cpu
+render_method = opengl
+
 fov = 90
 draw_distance = 100
-width = 2000
-height = 1500
+max_depth = 5
+bias = 0.1
+
+width = 500
+height = 500
 fullscreen = false
+fps = 60

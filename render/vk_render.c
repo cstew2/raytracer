@@ -10,69 +10,82 @@
 
 int WINDOW_WIDTH;
 int WINDOW_HEIGHT;
-GLFWwindow *window;
 
+raytracer r;
 
 void vk_realtime_render(raytracer rt)
 {
-	
+	r = rt;
+	GLFWwindow *window = vk_init(rt.config);
+
+	log_msg(INFO, "Starting main game loop\n");
+	while(!glfwWindowShouldClose(window)) {
+		vk_input(window);
+		vk_update(window);
+		vk_render(window);
+	}
+	vk_cleanup(window);
 }
 
-void vk_init(config *c)
+GLFWwindow *vk_init(config c)
 {
+	log_msg(INFO, "Initializing Vulkan rendering setup\n");
+	// start GL context and O/S window using the GLFW helper library
 	log_msg(INFO, "Starting GLFW: %s\n", glfwGetVersionString());
+	// register the error call-back function that we wrote, above
 	if (!glfwInit()) {
 		log_msg(ERROR, "Could not start GLFW3\n");
-		return;
+		return NULL;
 	}
-	
-	if(c->fullscreen) {
+		
+	GLFWwindow *window = NULL;
+	if(c.fullscreen) {
 		log_msg(INFO, "Using fullscreen mode\n");
-		GLFWmonitor* mon = glfwGetPrimaryMonitor();
-		const GLFWvidmode* vmode = glfwGetVideoMode(mon);
+		GLFWmonitor* mon = glfwGetPrimaryMonitor ();
+		const GLFWvidmode* vmode = glfwGetVideoMode (mon);
 		window = glfwCreateWindow (vmode->width, vmode->height,
 					   "Vulkan - Voxel Raytracer", mon, NULL);
+
 	}
 	else {
 		log_msg(INFO, "Using windowed mode\n");
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-		window = glfwCreateWindow(c->width, c->height,
+		window = glfwCreateWindow(c.width, c.height,
 					  "Vulkan - Voxel Raytracer", NULL, NULL);
-		
 	}
-	WINDOW_WIDTH = c->width;
-	WINDOW_HEIGHT = c->height;
+	
 	if (!window) {
 		log_msg(ERROR, "Could not open window with GLFW3\n");
 		glfwTerminate();
-		return;
+		return NULL;
 	}
+	glfwMakeContextCurrent(window);
+}
 
+void vk_cleanup(GLFWwindow *window)
+{
+	log_msg(INFO, "Terminating Vulkan Rendering setup\n");
 	
+	glfwDestroyWindow(window);
+       	glfwTerminate();
 }
 
-void vk_term(void)
+void vk_render(GLFWwindow *window)
 {
 
 }
 
-void vk_render(void)
+void vk_update(GLFWwindow *window)
 {
 
 }
 
-void vk_update(void)
-{
-
-}
-
-void vk_input(void)
+void vk_input(GLFWwindow *window)
 {
 
 }
 
 VkInstance createInstance() {
+	
 	VkInstance instance;
 	
         VkApplicationInfo appInfo = {};

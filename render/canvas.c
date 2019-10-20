@@ -1,10 +1,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "canvas.h"
+#include "render/canvas.h"
+#include "debug/debug.h"
 
 canvas canvas_init(int width, int height)
 {
+	log_msg(INFO, "Initializing Canvas\n");
 	canvas cv;
 	cv.width = width;
 	cv.height = height;
@@ -14,6 +16,7 @@ canvas canvas_init(int width, int height)
 
 void canvas_term(canvas c)
 {
+	log_msg(INFO, "Terminating Canvas\n");
 	free(c.screen);
 }
 

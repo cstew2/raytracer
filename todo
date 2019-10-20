@@ -8,12 +8,18 @@ things to improve:
 todo soon:
 -redo how main function works
       -need to change control flow for lots of stuff
--generate camera rays in camera.c
+(DONE)-generate camera rays in camera.c
 
 -fix camera movement(4x4 matrix transformations?)
 -raytracer ray generation
 -load world scene from file(another parser!)
 -utility to create world scene files
+
+raytracing
+	-vulkan
+	-framebuffer
+	-threaded implementation
+	-cuda implementation
 
 todo later:
 -entities(players, enemies, etc.)
@@ -31,8 +37,6 @@ todo later:
 	-more general threading
 -scripting language
 -tools(scene making,animation)
-raytracing
-	-threaded implementation
-	-cuda implementation
+
 -voxels(and SVO)
 -polygon mesh to voxel algo

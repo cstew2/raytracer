@@ -7,11 +7,9 @@
 #include "debug/debug.h"
 
 
-void file_render(raytracer rt)
+void file_render(raytracer rt, char *filename)
 {	
-	render(rt);
-		
-	char filename[] = "output.ppm";
+	cpu_render(rt);
 	write_ppm_file(filename, rt.canvas);
 }
 

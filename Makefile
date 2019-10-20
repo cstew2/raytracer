@@ -1,9 +1,9 @@
-TARGET          = raytracer
+TARGET          := raytracer
 
-MODULES         = main math world render debug
+MODULES         := main math world render debug
 
-CC              = gcc
-CUCC		= gcc
+CC              := gcc
+CUCC		:= gcc
 
 CFLAGS          := -std=c11 -I.
 
@@ -11,19 +11,20 @@ CUFLAGS		:=
 
 DCFLAGS         := -g -ggdb3 -O0 -Wall -pedantic -Wextra -Wundef -Wshadow \
                    -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wwrite-strings \
-                   -Wswitch-default -Wswitch-enum -Wunreachable-code -Winit-self \
+                   -Wswitch-default -Wswitch-enum -Wunreachable-code -Winit-self
+RCFLAGS         := -O2 -ftree-loop-vectorize -ftree-vectorize -s -DNDEBUG -march=native
 
-RCFLAGS         := -O2 -fwhole-program -flto -ftree-vectorize -s -DNDEBUG -march=native
 
-
-CUDFLAGS	:= -g
-CURFLAGS	:= -O2
+CUDFLAGS	:= -g -ggdb3 -O0 -Wall -pedantic -Wextra -Wundef -Wshadow \
+                   -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wwrite-strings \
+                   -Wswitch-default -Wswitch-enum -Wunreachable-code -Winit-self
+CURFLAGS	:= -O2 -ftree-loop-vectorize -ftree-vectorize -s -DNDEBUG -march=native
 CUPFLAGS	:= -pg
 
 LIBS            := 
 
-LDFLAGS		:=
-CULDFLAGS	:=
+LDFLAGS		:= -flto -s 
+CULDFLAGS	:= -flto -s 
 
 SRC		:= 
 INC		:= 

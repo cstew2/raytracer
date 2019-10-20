@@ -22,9 +22,10 @@ int main(int argc, char **argv)
 	char *config_path = NULL;
 	config c;
 
+	bool threads = false;
 	bool cuda = false;
-	bool picture = false;
 
+	bool picture = false;
 	bool opengl = false;
 	bool vulkan = false;
 	bool sdl = false;
@@ -45,7 +46,7 @@ int main(int argc, char **argv)
 			}
 			else if(!strncmp(argv[i], "-c", 2)) {
 				i++;
-				log_msg(INFO, "Loading configuration file %s\n", argv[i]);
+				log_msg(INFO, "Loading configuration file: %s\n", argv[i]);
 				config_path = malloc(sizeof(char) * strlen(argv[i] + 1));
 				strcpy(config_path, argv[i]);
 			}
@@ -78,11 +79,11 @@ int main(int argc, char **argv)
 	raytracer rt = raytracer_test(c);
 	
 	if(picture) {
-		file_render(rt);
+		file_render(rt, filename);
 	}
 	else {
 		if(opengl && vulkan && sdl) {
-			log_msg(WARN, "You passed too many arguments for \n");
+			log_msg(WARN, "You passed too many arguments for the render\n");
 		}
 		else if(opengl && !vulkan && !sdl) {
 			gl_realtime_render(rt);

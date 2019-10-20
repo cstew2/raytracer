@@ -14,10 +14,8 @@ typedef struct {
 	material hit_m;
 }hit_info;
 
-vec3 reflection(vec3 incident, vec3 normal);
-int trace(ray r, raytracer rt, hit_info *hi);
-colour cast_ray(ray r, raytracer rt);
-
-int render(raytracer rt);
+int cpu_trace(ray r, hit_info *hi);
+colour cpu_cast_ray(ray r);
+int cpu_render(raytracer rt);
 
 #endif

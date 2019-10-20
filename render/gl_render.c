@@ -4,11 +4,14 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "render/gl_render.h"
+
+#include "math/math.h"
 #include "debug/debug.h"
 
 static double previous_seconds;
@@ -26,6 +29,13 @@ bool back = false;
 bool up = false;
 bool down = false;
 
+bool first_mouse = true;
+float last_x;
+float last_y;
+float yaw = -90.0f;
+float pitch = 0.0f;
+float speed = 0.1f;
+
 raytracer r;
 
 void gl_realtime_render(raytracer rt)
@@ -33,27 +43,29 @@ void gl_realtime_render(raytracer rt)
 	r = rt;
 	GLFWwindow *window = gl_init(rt.config);
 
+	log_msg(INFO, "Starting main game loop\n");
 	while(!glfwWindowShouldClose(window)) {
 		gl_input(window);
 		gl_update(window);
-		gl_render();
+		gl_render(window);
 	}
 	gl_cleanup(window);
 }
 
 GLFWwindow *gl_init(config c)
 {
+	log_msg(INFO, "Initializing OpenGL rendering setup\n");
 	// start GL context and O/S window using the GLFW helper library
 	log_msg(INFO, "Starting GLFW: %s\n", glfwGetVersionString());
 	// register the error call-back function that we wrote, above
-	glfwSetErrorCallback(glfw_error_callback);
+	glfwSetErrorCallback(gl_glfw_error_callback);
 	if (!glfwInit()) {
 		log_msg(ERROR, "Could not start GLFW3\n");
 		return NULL;
 	}
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
@@ -108,22 +120,17 @@ GLFWwindow *gl_init(config c)
 
 	previous_seconds = 0;
 	frame_count = 0;
-
-	//disable things not needed
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_COLOR_LOGIC_OP);
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_BLEND);
-	glDisable(GL_DITHER);
-	glDisable(GL_MULTISAMPLE);
-	glDisable(GL_SCISSOR_TEST);
-	glDisable(GL_STENCIL_TEST);
+	last_x = c.width/2;
+	last_y = c.height/2;
 	
 	//setup rendering
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, c.width, c.height);
+	log_msg(INFO, "Initializing shader program\n");
 	shader = create_program("./render/quad.vert", "./render/quad.frag");
+	log_msg(INFO, "Initializing fullscreen quad VAO and VBO\n");
 	init_quad();
+	log_msg(INFO, "Initializing fullscreen texture\n");
 	init_texture(c.width, c.height);
 	
 	//setup the raytracer
@@ -132,82 +139,70 @@ GLFWwindow *gl_init(config c)
 	return window;
 }
 
-void gl_render()
+void gl_render(GLFWwindow *window)
 {
 	//get next from from raytracing renderer
-	render(r);
+	if(rt.config
+	cpu_render(r);
+	
+	glBindTexture(GL_TEXTURE_2D, tex);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, r.canvas.width, r.canvas.height, GL_RGBA,
 			GL_UNSIGNED_BYTE, r.canvas.screen);
 
 	//clear frame, draw tex to screen aligned quad
-	glClearColor(0.5, 0.1, 0.9, 1.0);
+	glClearColor(0.9, 0.9, 0.9, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	glBindVertexArray(vao);
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
+	glfwSwapBuffers(window);
 }
 
 void gl_input(GLFWwindow *window)
 {
 	glfwPollEvents();
-	if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
-		glfwSetWindowShouldClose(window, 1);
-	}
-	else if(GLFW_PRESS == glfwGetKey(window, GLFW_KEY_W)) {
-		//m.position = vec3_add(cam.position, vec3_new(1.0, 0.0, 0.0)); 
-	}
-	else if(GLFW_PRESS == glfwGetKey(window, GLFW_KEY_A)) {
-		//m.position = vec3_add(cam.position, vec3_new(0.0, 1.0, 0.0)); 
-	}
-	else if(GLFW_PRESS == glfwGetKey(window, GLFW_KEY_S)) {
-		//m.position = vec3_sub(cam.position, vec3_new(0.0, 1.0, 0.0)); 
-	}
-	else if(GLFW_PRESS == glfwGetKey(window, GLFW_KEY_D)) {
-		//m.position = vec3_sub(cam.position, vec3_new(1.0, 0.0, 0.0)); 
-	}
-	else if(GLFW_PRESS == glfwGetKey(window, GLFW_KEY_Q)) {
-		
-	}
-	else if(GLFW_PRESS == glfwGetKey(window, GLFW_KEY_E)) {
-		
-	}
-			
 }
 
 void gl_update(GLFWwindow *window)
 {
 	previous_seconds = glfwGetTime();
 	update_fps_counter(window);
-	/*
-	float cam_y = cam_pos.y;
+	
+	float cam_y = r.camera.position.y;
 	
 	if(forward) {
-		cam_pos += speed * cam_dir;
-		cam_pos.y = cam_y;
+		r.camera.position = vec3_add(r.camera.position, vec3_scale(r.camera.direction, speed));
+		r.camera.position.y = cam_y;
 	}
 	if(left) {
-		cam_pos -= glm::normalize(glm::cross(cam_dir, cam_up)) * speed;
-		cam_pos.y = cam_y;
+		r.camera.position = vec3_sub(r.camera.position, vec3_scale(vec3_normalise(vec3_cross(r.camera.direction, r.camera.up)), speed));
+		r.camera.position.y = cam_y;
 	}
 	if(right) {
-		cam_pos += glm::normalize(glm::cross(cam_dir, cam_up)) * speed;
-		cam_pos.y = cam_y;
+		r.camera.position = vec3_add(r.camera.position, vec3_scale(vec3_normalise(vec3_cross(r.camera.direction, r.camera.up)), speed));
+		r.camera.position.y = cam_y;
 	}
 	if(back) {
-		cam_pos -= speed * cam_dir;
-		cam_pos.y = cam_y;
+		r.camera.position = vec3_sub(r.camera.position, vec3_scale(r.camera.direction, speed));
+		r.camera.position.y = cam_y;
 	}
 	if(up) {
-		cam_pos -= glm::vec3(0, 1, 0) * speed; 	
+		r.camera.position = vec3_sub(r.camera.position, vec3_new(0, 0, speed));	
 	}
 	if(down) {
-		cam_pos += glm::vec3(0, 1, 0) * speed;
+		r.camera.position = vec3_add(r.camera.position, vec3_new(0, 0, speed));
 	}
-	*/
+	
 }
 
 void gl_cleanup(GLFWwindow *window)
 {
+	log_msg(INFO, "Terminating OpenGL Rendering setup\n");
+	glTextureSubImage2D(tex, 0, 0, 0, 0, 0, GL_RGBA,
+			GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
 	glDeleteTextures(1, &tex);
 	glDeleteBuffers(1, &vao);
 	glDeleteBuffers(1, &vbo);
@@ -216,7 +211,7 @@ void gl_cleanup(GLFWwindow *window)
        	glfwTerminate();
 }
 
-void glfw_error_callback(int error, const char *description)
+void gl_glfw_error_callback(int error, const char *description)
 {
 	log_msg(ERROR, "GLFW ERROR: code %i msg: %s\n", error, description);
 }
@@ -251,6 +246,7 @@ void gl_window_resize_callback(GLFWwindow *w, int width, int height)
 	init_texture(width, height);
 	canvas_term(r.canvas);
 	r.canvas = canvas_init(width, height);
+	r.camera = camera_init(r.camera.position, r.camera.direction, r.camera.up, width, height, r.camera.fov);
 	glViewport(0, 0, width, height);
 	log_msg(INFO, "Resize - width: %i height: %i\n", width, height);
 }
@@ -305,7 +301,7 @@ void gl_key_callback(GLFWwindow* window, int key, int scancode, int action, int 
 }
 void gl_mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	/*
+	
 	if(first_mouse)
 	{
 		last_x = xpos;
@@ -330,41 +326,45 @@ void gl_mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	if(pitch < -89.0f)
 		pitch = -89.0f;
 
-	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cam_dir = glm::normalize(front);
-	cam_up = glm::vec3(0.0, 1.0, 0.0);
-	*/
+	vec3 front;
+	front.x = cosf(deg2rad(yaw)) * cosf(deg2rad(pitch));
+	front.y = sinf(deg2rad(pitch));
+	front.z = sinf(deg2rad(yaw)) * cosf(deg2rad(pitch));
+	r.camera.direction = vec3_normalise(front);
+	r.camera.up = vec3_new(0.0, 1.0, 0.0);
+	
 }
 
 void gl_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-        /*
-	if(fov >= 1.0f && fov <= 90.0f)
-		fov -= yoffset;
-	if(fov <= 1.0f)
-		fov = 1.0f;
-	if(fov >= 90.0f)
-		fov = 90.0f;
-	*/
+        
+	if(r.camera.fov >= 1.0f && r.camera.fov <= 90.0f)
+		r.camera.fov -= yoffset;
+	if(r.camera.fov <= 1.0f)
+		r.camera.fov = 1.0f;
+	if(r.camera.fov >= 90.0f)
+		r.camera.fov = 90.0f;
+	
 }
 
 GLuint load_shader(const char *filename, GLenum shadertype)
 {
 	FILE *fp = fopen(filename, "r");
-
+	log_msg(INFO, "Reading %s in\n", filename);
 	fseek(fp, 0L, SEEK_END);
 	size_t size = ftell(fp);
 	rewind(fp);
 
 	char *buffer = calloc(size+1, sizeof(char));
-	fread(buffer, size, 1, fp);
-
+	size_t read_size = fread(buffer, size, 1, fp);
+	if(size != read_size){
+		log_msg(WARN, "Could not read all of config file %s\n", filename);
+	}
+	
 	fclose(fp);
 	GLuint shader_prog = glCreateShader(shadertype);
 	glShaderSource(shader_prog, 1, (const GLchar * const *)&buffer, NULL);
+	log_msg(INFO, "Compliling %s\n", filename);
 	glCompileShader(shader_prog);
 
 	GLint success;
@@ -388,7 +388,9 @@ GLuint create_program(const char *vert_path, const char *frag_path)
 	GLuint frag = load_shader(frag_path, GL_FRAGMENT_SHADER);
 
 	//Attach the above shader to a program
+	log_msg(INFO, "Creating shader program\n");
 	GLuint program = glCreateProgram();
+	log_msg(INFO, "Attaching vertex and fragment shader programs\n");
 	glAttachShader(program, vert);
 	glAttachShader(program, frag);
 	
@@ -416,27 +418,30 @@ void init_quad(void)
 		 1.0f,  1.0f, 0.0f,  1.0f, 1.0f
 	};
 
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-		
+	log_msg(INFO, "Creating Vertex Buffer Object\n");
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-		
-	glEnableVertexAttribArray(glGetAttribLocation(shader, "in_position"));
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(glGetAttribLocation(shader, "in_tex_coords"));
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+
+	log_msg(INFO, "Creating Vertex Array Object\n");
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 }
 
 void init_texture(int window_width, int window_height)
 {
-	glActiveTexture(GL_TEXTURE0);	
+	glActiveTexture(GL_TEXTURE0);
+	log_msg(INFO, "Creating texture object\n");
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window_width, window_height,
+		     0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
 void update_fps_counter(GLFWwindow *w)

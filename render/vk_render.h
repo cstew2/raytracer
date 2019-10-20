@@ -5,11 +5,11 @@
 
 void vk_realtime_render(raytracer rt);
 
-void vk_init(config *c);
-void vk_term(void);
+GLFWwindow *vk_init(config c);
+void vk_cleanup(GLFWwindow *window);
 
-void vk_render(void);
-void vk_update(void);
-void vk_input(void);
+void vk_render(GLFWwindow *window);
+void vk_update(GLFWwindow *window);
+void vk_input(GLFWwindow *window);
 
 #endif
