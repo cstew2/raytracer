@@ -8,6 +8,7 @@ typedef struct {
 	vec3 position;
 	vec3 direction;
 	vec3 up;
+	vec3 right;
 		
 	float fov;
 	float aspect_ratio;
@@ -22,9 +23,13 @@ typedef struct {
 
 camera camera_init(vec3 p, vec3 d, vec3 u, int width, int height, float fov);
 
-camera camera_rotate_z(camera c, float angle);
-camera camera_rotate_y(camera c, float angle);
-camera camera_rotate_x(camera c, float angle);
+void camera_right(camera *c, float speed);
+void camera_left(camera *c, float speed);
+void camera_forward(camera *c, float speed);
+void camera_backward(camera *c, float speed);
+void camera_up(camera *c, float speed);
+void camera_down(camera *c, float speed);
+void camera_rotate(camera *c, float pitch, float yaw);
 
 ray generate_ray(camera c, int x, int y);
 

@@ -34,7 +34,7 @@ float last_x;
 float last_y;
 float yaw = -90.0f;
 float pitch = 0.0f;
-float speed = 0.5f;
+float speed = 1.0f;
 
 raytracer r;
 
@@ -98,7 +98,7 @@ GLFWwindow *gl_init(config c)
 	glfwSetCursorPosCallback(window, gl_mouse_callback);
 	glfwSetScrollCallback(window, gl_scroll_callback);
 
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 	
 	// start GLEW extension handler
@@ -165,33 +165,33 @@ void gl_input(GLFWwindow *window)
 
 void gl_update(GLFWwindow *window)
 {
-	update_fps_counter(window);
-	
-	float cam_y = r.camera.position.y;
+	update_fps_counter(window);    
 	
 	if(forward) {
-		r.camera.position = vec3_add(r.camera.position, vec3_scale(r.camera.direction, speed));
-		r.camera.position.y = cam_y;
+		camera_forward(&r.camera, speed);
 	}
 	if(left) {
-		r.camera.position = vec3_sub(r.camera.position, vec3_scale(vec3_normalise(vec3_cross(r.camera.direction, r.camera.up)), speed));
-		r.camera.position.y = cam_y;
+		camera_left(&r.camera, speed);
 	}
 	if(right) {
-		r.camera.position = vec3_add(r.camera.position, vec3_scale(vec3_normalise(vec3_cross(r.camera.direction, r.camera.up)), speed));
-		r.camera.position.y = cam_y;
+		camera_right(&r.camera, speed);
 	}
 	if(back) {
-		r.camera.position = vec3_sub(r.camera.position, vec3_scale(r.camera.direction, speed));
-		r.camera.position.y = cam_y;
+		camera_backward(&r.camera, speed);
 	}
 	if(up) {
-		r.camera.position = vec3_sub(r.camera.position, vec3_new(0, 0, speed));	
+		camera_up(&r.camera, speed);	
 	}
 	if(down) {
-		r.camera.position = vec3_add(r.camera.position, vec3_new(0, 0, speed));
+		camera_down(&r.camera, speed);	
 	}
-	
+	printf("position: %f, %f, %f direction: %f, %f, %f\n",
+	       r.camera.position.x,
+	       r.camera.position.y,
+	       r.camera.position.z,
+	       r.camera.direction.x,
+	       r.camera.direction.y,
+	       r.camera.direction.z);
 }
 
 void gl_cleanup(GLFWwindow *window)
@@ -248,7 +248,8 @@ void gl_window_resize_callback(GLFWwindow *w, int width, int height)
 	init_texture(width, height);
 	canvas_term(r.canvas);
 	r.canvas = canvas_init(width, height);
-	r.camera = camera_init(r.camera.position, r.camera.direction, r.camera.up, width, height, r.camera.fov);
+	r.camera = camera_init(r.camera.position, r.camera.direction, r.camera.up,
+			       width, height, r.camera.fov);
 	glViewport(0, 0, width, height);
 	log_msg(INFO, "Resize - width: %i height: %i\n", width, height);
 }
@@ -327,22 +328,12 @@ void gl_mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	if(pitch < -89.0f)
 		pitch = -89.0f;
 
-	vec3 front;
-	front.x = cosf(deg2rad(yaw)) * cosf(deg2rad(pitch));
-	front.y = sinf(deg2rad(pitch));
-	front.z = sinf(deg2rad(yaw)) * cosf(deg2rad(pitch));
-	r.camera.direction = vec3_normalise(front);
-	r.camera.up = vec3_new(0.0, 0.0, 1.0);
+	camera_rotate(&r.camera, pitch, yaw);
 }
 
 void gl_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	if(r.camera.fov >= 1.0f && r.camera.fov <= 90.0f)
-		r.camera.fov -= yoffset;
-	if(r.camera.fov <= 1.0f)
-		r.camera.fov = 1.0f;
-	if(r.camera.fov >= 90.0f)
-		r.camera.fov = 90.0f;
+	
 }
 
 GLuint load_shader(const char *filename, GLenum shadertype)

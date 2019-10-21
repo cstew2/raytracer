@@ -170,11 +170,11 @@ void sdl_input(sdl_data *data)
 			
 			//rotation camera about x or y
 			if(event.motion.x > data->mousex) {
-				data->rt.camera = camera_rotate_z(data->rt.camera, PI/(360.0));
+				//data->rt.camera = camera_rotate_z(data->rt.camera, PI/(360.0));
 			}
 			//rotation camera about x or y
 			else if(event.motion.x < data->mousex) {
-				data->rt.camera = camera_rotate_z(data->rt.camera, -PI/(360.0));
+				//data->rt.camera = camera_rotate_z(data->rt.camera, -PI/(360.0));
 			}
 			//rotate camera right about z
 			else if(event.motion.y > data->mousey) {
