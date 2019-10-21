@@ -14,7 +14,7 @@ typedef struct {
 	material h;
 }triangle;
 
-triangle new_triangle(vec3 v1, vec3 v2, vec3 v3, colour c);
+triangle triangle_new(vec3 v1, vec3 v2, vec3 v3, colour c);
 int triangle_intersect(ray r, triangle t, vec3 *intersect);
 	
 #endif

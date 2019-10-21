@@ -9,22 +9,24 @@ CFLAGS          := -std=c11 -I.
 
 CUFLAGS		:= 
 
-DCFLAGS         := -g -ggdb3 -O0 -Wall -pedantic -Wextra -Wundef -Wshadow \
-                   -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wwrite-strings \
-                   -Wswitch-default -Wswitch-enum -Wunreachable-code -Winit-self
+DCFLAGS         := -g -ggdb3 -O0 -Wall -pedantic -Wextra
 RCFLAGS         := -O2 -ftree-loop-vectorize -ftree-vectorize -s -DNDEBUG -march=native
+PCFLAGS		:=
 
-
-CUDFLAGS	:= -g -ggdb3 -O0 -Wall -pedantic -Wextra -Wundef -Wshadow \
-                   -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wwrite-strings \
-                   -Wswitch-default -Wswitch-enum -Wunreachable-code -Winit-self
-CURFLAGS	:= -O2 -ftree-loop-vectorize -ftree-vectorize -s -DNDEBUG -march=native
-CUPFLAGS	:= -pg
+DCUFLAGS	:= -g -ggdb3 -O0 -Wall -pedantic -Wextra 
+RCUFLAGS	:= -O2 -ftree-loop-vectorize -ftree-vectorize -s -DNDEBUG -march=native
+PCUFLAGS	:= -pg
 
 LIBS            := 
 
-LDFLAGS		:= -flto -s 
-CULDFLAGS	:= -flto -s 
+LDFLAGS		:= 
+DLDFLAGS	:= 
+RLDFLAGS	:= -flto -s
+PLDFLAGS	:=
+
+DCULDFLAGS	:= 
+RCULDFLAGS	:= -flto -s
+PCULDFLAGS	:=
 
 SRC		:= 
 INC		:= 
@@ -44,26 +46,24 @@ default:debug
 
 .PHONY: debug 
 debug: CFLAGS += $(DCFLAGS)
-debug: CUFLAGS += $(CUDFLAGS)
+debug: CUFLAGS += $(DCUFLAGS)
+debug: LDFLAGS += $(DLDFLAGS)
+debug: CULDFLAGS += $(DCULDFLAGS)
 debug: build
 
 .PHONY: release
 release: CFLAGS += $(RCFLAGS)
 debug: CUFLAGS += $(CURFLAGS)
+debug: LDFLAGS += $(DLDFLAGS)
+debug: CULDFLAGS += $(DCULDFLAGS)
 release: build
 
-.PHONY: release
+.PHONY: profile
 release: CFLAGS += $(PCFLAGS)
-debug: CUFLAGS += $(CUPFLAGS)
+debug: CUFLAGS += $(PCUFLAGS)
+debug: LDFLAGS += $(PLDFLAGS)
+debug: CULDFLAGS += $(PCULDFLAGS)
 release: build
-
-.PHONY: cpu
-cpu: CFLAGS += $(DCFLAGS)
-cpu: cpubuild
-
-cpubuild: $(OBJ)
-	@$(CC) $(LDFLAGS) $(OBJ) -o $(TARGET) $(LIBS)
-	@echo [LD] Linked $^ into $(TARGET)
 
 .PHONY: build
 build: $(OBJ) $(CUOBJ)

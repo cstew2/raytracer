@@ -7,28 +7,28 @@ static const int BUFFER_LEN = 64;
 static const char COMMENT_PREFIX = '#';
 static const char ASSIGNMENT_SEPERATOR = '=';
 
-typedef enum CONFIG_TYPES = {
+typedef enum {
 	BOOL,
 	CHAR,
 	STRING,
 	INT,
 	FLOAT
-};
+}CONFIG_TYPES;
 
-typedef enum RAYTRACE_METHOD {
+typedef enum {
 	CPU,
 	MULTITHREADED,
 	CUDA,
 	OPENCL
-};
+}RAYTRACE_METHOD;
 
-typedef enum RENDER_METHOD {
-	FILE,
+typedef enum {
+	PPM,
 	OPENGL,
 	VULKAN,
 	SDL,
 	LINUX_FB
-};
+}RENDER_METHOD;
 
 typedef struct {
 	//platform rendering
@@ -60,8 +60,8 @@ static const config config_defaults = {
 	0.1,
 	
 	//window
-	2000,
-	1000,
+	500,
+	500,
 	false,
 	120
 };

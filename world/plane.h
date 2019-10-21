@@ -13,7 +13,7 @@ typedef struct{
 	material m;
 }plane;
 
-plane new_plane(vec3 p, vec3 n, colour c, material m);
+plane plane_new(vec3 p, vec3 n, colour c, material m);
 int plane_intersect(ray r, plane p, float *t);
 	
 #endif

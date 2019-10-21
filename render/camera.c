@@ -33,7 +33,7 @@ camera camera_rotate_z(camera c, float angle)
 
 camera camera_rotate_y(camera c, float angle)
 {
-     
+	
 	return c;
 }
 

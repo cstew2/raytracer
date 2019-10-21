@@ -14,8 +14,8 @@ typedef struct {
 	material hit_m;
 }hit_info;
 
-int cpu_trace(ray r, hit_info *hi);
-colour cpu_cast_ray(ray r);
+int cpu_trace(ray r, raytracer rt, hit_info *hi);
+colour cpu_cast_ray(ray r, raytracer rt);
 int cpu_render(raytracer rt);
 
 #endif

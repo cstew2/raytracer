@@ -1,6 +1,6 @@
 #include "world/plane.h"
 
-plane new_plane(vec3 p, vec3 n, colour c, material m)
+plane plane_new(vec3 p, vec3 n, colour c, material m)
 {
 	plane pl;
 	pl.position = p;

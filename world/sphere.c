@@ -3,7 +3,7 @@
 #include "world/sphere.h"
 
 
-sphere new_sphere(vec3 p, float r, colour c, material m)
+sphere sphere_new(vec3 p, float r, colour c, material m)
 {
 	sphere s;
 	s.position = p;

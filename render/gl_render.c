@@ -14,7 +14,7 @@
 #include "math/math.h"
 #include "debug/debug.h"
 
-static double previous_seconds;
+static double previous_time;
 static int frame_count;
 
 GLuint vao;
@@ -34,7 +34,7 @@ float last_x;
 float last_y;
 float yaw = -90.0f;
 float pitch = 0.0f;
-float speed = 0.1f;
+float speed = 0.5f;
 
 raytracer r;
 
@@ -98,7 +98,7 @@ GLFWwindow *gl_init(config c)
 	glfwSetCursorPosCallback(window, gl_mouse_callback);
 	glfwSetScrollCallback(window, gl_scroll_callback);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 	
 	// start GLEW extension handler
@@ -118,7 +118,7 @@ GLFWwindow *gl_init(config c)
 		glGetString(GL_RENDERER),
 		glGetString(GL_VERSION));
 
-	previous_seconds = 0;
+	previous_time = 0;
 	frame_count = 0;
 	last_x = c.width/2;
 	last_y = c.height/2;
@@ -142,7 +142,6 @@ GLFWwindow *gl_init(config c)
 void gl_render(GLFWwindow *window)
 {
 	//get next from from raytracing renderer
-	if(rt.config
 	cpu_render(r);
 	
 	glBindTexture(GL_TEXTURE_2D, tex);
@@ -150,7 +149,7 @@ void gl_render(GLFWwindow *window)
 			GL_UNSIGNED_BYTE, r.canvas.screen);
 
 	//clear frame, draw tex to screen aligned quad
-	glClearColor(0.9, 0.9, 0.9, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glBindVertexArray(vao);
@@ -166,7 +165,6 @@ void gl_input(GLFWwindow *window)
 
 void gl_update(GLFWwindow *window)
 {
-	previous_seconds = glfwGetTime();
 	update_fps_counter(window);
 	
 	float cam_y = r.camera.position.y;
@@ -199,15 +197,20 @@ void gl_update(GLFWwindow *window)
 void gl_cleanup(GLFWwindow *window)
 {
 	log_msg(INFO, "Terminating OpenGL Rendering setup\n");
+	log_msg(INFO, "Freeing fullscreen texture\n");
 	glTextureSubImage2D(tex, 0, 0, 0, 0, 0, GL_RGBA,
-			GL_UNSIGNED_BYTE, NULL);
+			    GL_UNSIGNED_BYTE, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	
 	glDeleteTextures(1, &tex);
+	log_msg(INFO, "Freeing fullscreen quad VAO and VBO\n");
 	glDeleteBuffers(1, &vao);
 	glDeleteBuffers(1, &vbo);
+	log_msg(INFO, "Freeing shader program\n");
+	glDeleteProgram(shader);
 	
+	log_msg(INFO, "Terminating glfw window\n");
 	glfwDestroyWindow(window);
+	log_msg(INFO, "Terminating glfw\n");
        	glfwTerminate();
 }
 
@@ -215,7 +218,6 @@ void gl_glfw_error_callback(int error, const char *description)
 {
 	log_msg(ERROR, "GLFW ERROR: code %i msg: %s\n", error, description);
 }
-
 
 void check_gl_error(const char *place)
 {
@@ -301,7 +303,6 @@ void gl_key_callback(GLFWwindow* window, int key, int scancode, int action, int 
 }
 void gl_mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	
 	if(first_mouse)
 	{
 		last_x = xpos;
@@ -331,20 +332,17 @@ void gl_mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	front.y = sinf(deg2rad(pitch));
 	front.z = sinf(deg2rad(yaw)) * cosf(deg2rad(pitch));
 	r.camera.direction = vec3_normalise(front);
-	r.camera.up = vec3_new(0.0, 1.0, 0.0);
-	
+	r.camera.up = vec3_new(0.0, 0.0, 1.0);
 }
 
 void gl_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-        
 	if(r.camera.fov >= 1.0f && r.camera.fov <= 90.0f)
 		r.camera.fov -= yoffset;
 	if(r.camera.fov <= 1.0f)
 		r.camera.fov = 1.0f;
 	if(r.camera.fov >= 90.0f)
 		r.camera.fov = 90.0f;
-	
 }
 
 GLuint load_shader(const char *filename, GLenum shadertype)
@@ -448,16 +446,16 @@ void update_fps_counter(GLFWwindow *w)
 {
 	char tmp[64];
 
-	double current_seconds = glfwGetTime();
-	double elapsed_seconds = current_seconds - previous_seconds;
-	if(elapsed_seconds > 0.0000001) {
-		previous_seconds = current_seconds;
-
-		double fps = (double)frame_count / elapsed_seconds;
-		sprintf(tmp, "OpenGL - Raytracer @ fps: %.2f", fps);
+	double current_time = glfwGetTime();
+	double elapsed_time = current_time - previous_time;
+	frame_count++;
+	if(elapsed_time > 0.1f) {
+		double fps = (double)frame_count/elapsed_time;
+		sprintf(tmp, "OpenGL - Voxel Raytracer @ fps: %.2f", fps);
 		glfwSetWindowTitle(w, tmp);
+
+		previous_time = current_time;
 		frame_count = 0;
 	}
-	frame_count++;
 }
 

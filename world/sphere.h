@@ -13,7 +13,7 @@ typedef struct{
 	material m;
 }sphere;
 
-sphere new_sphere(vec3 p, float r, colour c, material m);
+sphere sphere_new(vec3 p, float r, colour c, material m);
 int sphere_intersect(ray r, sphere s, float *t);
 
 #endif
