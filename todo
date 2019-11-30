@@ -20,6 +20,7 @@ raytracing
 	-framebuffer
 	-threaded implementation
 	-cuda implementation
+	-opencl implementation
 
 todo later:
 -entities(players, enemies, etc.)

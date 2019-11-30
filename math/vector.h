@@ -32,7 +32,7 @@ vec3_t vec3_dot(const vec3 u, const vec3 v);
 vec3 vec3_cross(const vec3 u, const vec3 v);
 
 vec3_t vec3_length(const vec3 u);
-vec3 vec3_normalise(const vec3 u);
+vec3 vec3_normalize(const vec3 u);
 bool vec3_compare(const vec3 u, const vec3 v);
 
 vec3 vec3_rotation(const vec3 u, const vec3 about, const vec3_t theta);
@@ -47,7 +47,7 @@ vec4 vec4_scale(const vec4 u, const vec4_t a);
 vec4_t vec4_dot(const vec4 u, const vec4 v);
 
 vec4_t vec4_length(const vec4 u);
-vec4 vec4_normalise(const vec4 u);
+vec4 vec4_normalize(const vec4 u);
 bool vec4_compare(const vec4 u, const vec4 v);
 
 #endif

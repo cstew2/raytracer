@@ -17,7 +17,7 @@
 
 int main(int argc, char **argv)
 {
-	log_init();
+	log_init(DEBUG);
 	char *filename = NULL;
 	char *config_path = NULL;
 	config c;
@@ -33,7 +33,11 @@ int main(int argc, char **argv)
 	//check args
 	if(argc > 1) {
 		for(int i=0; i < argc; i++) {
-			if(!strncmp(argv[i], "-f", 2)) {
+			if(!strncmp(argv[i], "-h", 2)) {
+				print_help();
+				return 0;
+			}
+			else if(!strncmp(argv[i], "-f", 2)) {
 				i++;
 				if(argv[i]) {
 					filename = malloc(sizeof(char) * strlen(argv[i] + 1));
@@ -123,9 +127,9 @@ void print_help(void)
 	       "-d \t debug on\n"
 	       "-c \t pass a config file\n"
 	       "-f \t open \"FILE\"\n"
-	       "-gl \t use opengl to render"
-	       "-vk \t use vulkan to render"
-	       "-sdl \t use SDL to render"
-	       "-p \t render single image to pnm file");
+	       "-gl \t use opengl to render\n"
+	       "-vk \t use vulkan to render\n"
+	       "-sdl \t use SDL to render\n"
+	       "-p \t render single image to pnm file\n");
 }
 

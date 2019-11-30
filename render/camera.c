@@ -11,9 +11,9 @@ camera camera_init(vec3 p, vec3 d, vec3 u, int width, int height, float fov)
 	log_msg(INFO, "Initializing Camera\n");
 	camera c;
 	c.position = p;
-	c.direction = vec3_normalise(d);
-	c.up = vec3_normalise(u);
-	c.right = vec3_normalise(vec3_cross(c.direction, c.up));
+	c.direction = vec3_normalize(d);
+	c.up = vec3_normalize(u);
+	c.right = vec3_normalize(vec3_cross(c.direction, c.up));
 
 	c.fov = fov;
 	c.aspect_ratio = width/height;
@@ -27,59 +27,52 @@ camera camera_init(vec3 p, vec3 d, vec3 u, int width, int height, float fov)
 
 void camera_right(camera *c, float speed)
 {
-	float cam_y = c->position.y;
-	c->position = vec3_add(c->position, vec3_scale(vec3_normalise(vec3_cross(c->direction, c->up)), speed));
-	c->position.y = cam_y;
+	c->position = vec3_add(c->position, vec3_scale(c->right, speed));
 }
 
 void camera_left(camera *c, float speed)
 {
-	float cam_y = c->position.y;
-	c->position = vec3_sub(c->position, vec3_scale(vec3_normalise(vec3_cross(c->direction, c->up)), speed));
-	c->position.y = cam_y;
+	c->position = vec3_sub(c->position, vec3_scale(c->right, speed));
 }
 
 void camera_forward(camera *c, float speed)
 {
-	float cam_y = c->position.y;
 	c->position = vec3_add(c->position, vec3_scale(c->direction, speed));
-	c->position.y = cam_y;
 }
 
 void camera_backward(camera *c, float speed)
 {
-	float cam_y = c->position.y;
 	c->position = vec3_sub(c->position, vec3_scale(c->direction, speed));
-	c->position.y = cam_y;
 }
 
 void camera_up(camera *c, float speed)
 {
-	c->position = vec3_sub(c->position, vec3_new(0, speed, 0));	
+	c->position = vec3_add(c->position, vec3_new(0, 0, speed));	
 }
 
 void camera_down(camera *c, float speed)
 {
-	c->position = vec3_add(c->position, vec3_new(0, speed, 0));
+	c->position = vec3_sub(c->position, vec3_new(0, 0, speed));
 }
 
 void camera_rotate(camera *c, float pitch, float yaw)
 {
-	vec3 front;
-	front.x = cosf(deg2rad(yaw)) * cosf(deg2rad(pitch));
-	front.y = sinf(deg2rad(pitch));
-	front.z = sinf(deg2rad(yaw)) * cosf(deg2rad(pitch));
-	c->direction = vec3_normalise(front);
-	c->up = vec3_new(0.0, 1.0, 0.0);
+	vec3 forward;
+	forward.x = cosf(deg2rad(yaw)) * cosf(deg2rad(pitch));
+	forward.y = sin(deg2rad(yaw)) * cosf(deg2rad(pitch));
+	forward.z = sin(deg2rad(pitch));
+	c->direction = vec3_normalize(forward);
+	c->up = vec3_new(0.0, 0.0, 1.0);
+	c->right = vec3_normalize(vec3_cross(c->direction, c->up));
 }
 
 ray generate_ray(camera c, int x, int y)
 {
 	vec3 ray_direction;
-	ray_direction.x = (2 * ((x + 0.5) / c.width) - 1) * c.tanfov * c.aspect_ratio;
-	ray_direction.y = (1 - 2 * ((y + 0.5) / c.height)) * c.tanfov;
-	ray_direction.z = 0;
+	ray_direction.x = 0;
+	ray_direction.y = (2 * ((x + 0.5) / c.width) - 1) * c.tanfov * c.aspect_ratio;
+	ray_direction.z = (1 - 2 * ((y + 0.5) / c.height)) * c.tanfov;
 	
-	ray_direction = vec3_normalise(vec3_add(c.direction, ray_direction));
+	ray_direction = vec3_normalize(vec3_add(c.direction, ray_direction));
 	return ray_init(c.position, ray_direction);
 }

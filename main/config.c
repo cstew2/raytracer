@@ -6,6 +6,24 @@
 #include "main/config.h"
 #include "debug/debug.h"
 
+static const config config_defaults = {
+	//platform rendering
+	.raytrace_method = CPU,
+	.render_method = OPENGL,
+	
+	//rendering
+	.fov = 90.0,
+	.draw_distance = 200.0,
+	.max_depth = 5,
+	.bias = 0.1,
+	
+	//window
+	.width = 500,
+	.height = 500,
+	.fullscreen = false,
+	.fps = 120
+};
+
 char *get_file(const char *filename)
 {
 	if(filename == NULL) {

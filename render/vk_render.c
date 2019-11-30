@@ -1,9 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-
 #include "vk_render.h"
 
 #include "debug/debug.h"
@@ -16,18 +13,19 @@ raytracer r;
 void vk_realtime_render(raytracer rt)
 {
 	r = rt;
-	GLFWwindow *window = vk_init(rt.config);
-
+	GLFWwindow *window = vk_glfw_init(rt.config);
+	VkInstance instance = vk_init();
+	
 	log_msg(INFO, "Starting main game loop\n");
 	while(!glfwWindowShouldClose(window)) {
 		vk_input(window);
 		vk_update(window);
 		vk_render(window);
 	}
-	vk_cleanup(window);
+	vk_cleanup(window, instance);
 }
 
-GLFWwindow *vk_init(config c)
+GLFWwindow *vk_glfw_init(config c)
 {
 	log_msg(INFO, "Initializing Vulkan rendering setup\n");
 	// start GL context and O/S window using the GLFW helper library
@@ -45,7 +43,6 @@ GLFWwindow *vk_init(config c)
 		const GLFWvidmode* vmode = glfwGetVideoMode (mon);
 		window = glfwCreateWindow (vmode->width, vmode->height,
 					   "Vulkan - Voxel Raytracer", mon, NULL);
-
 	}
 	else {
 		log_msg(INFO, "Using windowed mode\n");
@@ -59,11 +56,24 @@ GLFWwindow *vk_init(config c)
 		return NULL;
 	}
 	glfwMakeContextCurrent(window);
+
+		
+	return window;
 }
 
-void vk_cleanup(GLFWwindow *window)
+VkInstance vk_init(void)
+{
+	VkInstance instance = create_instance();
+	
+	
+	return instance;
+}
+
+void vk_cleanup(GLFWwindow *window, VkInstance instance)
 {
 	log_msg(INFO, "Terminating Vulkan Rendering setup\n");
+
+	vkDestroyInstance(instance, NULL);
 	
 	glfwDestroyWindow(window);
        	glfwTerminate();
@@ -84,11 +94,13 @@ void vk_input(GLFWwindow *window)
 
 }
 
-VkInstance createInstance() {
-	
+
+
+VkInstance create_instance(void)
+{
 	VkInstance instance;
 	
-        VkApplicationInfo appInfo = {};
+        VkApplicationInfo appInfo;
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
         appInfo.pApplicationName = "Vulkan Raytracer";
         appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
@@ -96,7 +108,7 @@ VkInstance createInstance() {
         appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
         appInfo.apiVersion = VK_API_VERSION_1_0;
 
-        VkInstanceCreateInfo createInfo = {};
+        VkInstanceCreateInfo createInfo;
         createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         createInfo.pApplicationInfo = &appInfo;
 

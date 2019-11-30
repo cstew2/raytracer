@@ -48,24 +48,6 @@ typedef struct {
 	unsigned int fps;
 }config;
 
-static const config config_defaults = {
-	//platform rendering
-	CPU,
-	OPENGL,
-	
-	//rendering
-	90.0,
-	200.0,
-	5,
-	0.1,
-	
-	//window
-	500,
-	500,
-	false,
-	120
-};
-
 char *get_file(const char *filename);
 config parser(char *file_data);
 config default_config(void);

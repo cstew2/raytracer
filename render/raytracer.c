@@ -3,6 +3,21 @@
 #include "render/raytracer.h"
 #include "debug/debug.h"
 
+static state default_state = {
+	.forward = false,
+	.left = false,
+	.right = false,
+	.back = false,
+	.up = false,
+	.down = false,
+
+	.last_x = 0,
+	.last_y = 0, 
+	.yaw = 0.0f,
+	.pitch = 0.0f,
+	.speed = 1.0f
+};
+
 raytracer raytracer_init(config c, camera cam, scene *objs)
 {
 	log_msg(INFO, "Initializing Raytracing Construct\n");
@@ -11,7 +26,7 @@ raytracer raytracer_init(config c, camera cam, scene *objs)
 	r.camera = cam;
 	r.objects = objs;
 	r.canvas = canvas_init(c.width, c.height);
-	
+	r.state = default_state;
 	return r;
 }
 
@@ -20,33 +35,28 @@ void raytracer_term(raytracer rt)
 	log_msg(INFO, "Terminating Raytracing Construct\n");
 	scene_term(rt.objects);
 	
-	//segfault with nvidia driver?
-	//canvas_term(rt.canvas);
+	canvas_term(rt.canvas);
 }
 		
 raytracer raytracer_test(config c)
 {
 	log_msg(INFO, "Initializing Raytracing Test scene\n");
-	camera cam = camera_init(vec3_new(-10.0, -1.0, -10.0),
-				 vec3_new(0.0, 0.0, 0.0),
+	camera cam = camera_init(vec3_new(10.0, 5.0, 10.0),
 				 vec3_new(0.0, 1.0, 0.0),
+				 vec3_new(0.0, 0.0, 1.0),
 				 c.width,
 				 c.height,
 				 c.fov);
 	
-	int plane_count = 3;
-	plane *planes = calloc(sizeof(plane), 3);
-	planes[0] = plane_new(vec3_new(0.0, 0.0, 0.0),
+	int plane_count = 2;
+	plane *planes = calloc(sizeof(plane), 2);
+	planes[0] = plane_new(vec3_new(0.0, 0.0, 100.0),
+			      vec3_new(0.0, 0.0, -1.0),
+			      colour_new(10, 50, 200),
+			      matte);
+	planes[1] = plane_new(vec3_new(0.0, 0.0, -10.0),
 			      vec3_new(0.0, 0.0, 1.0),
-			      colour_new(255, 0, 0),
-			      matte);
-	planes[1] = plane_new(vec3_new(0.0, 0.0, 0.0),
-			      vec3_new(0.0, 1.0, 0.0),
-			      colour_new(0, 255, 0),
-			      matte);
-	planes[2] = plane_new(vec3_new(0.0, 0.0, 0.0),
-			      vec3_new(1.0, 0.0, 0.0),
-			      colour_new(0, 0, 255),
+			      colour_new(10, 200, 50),
 			      matte);
 			      
 	int sphere_count = 3;

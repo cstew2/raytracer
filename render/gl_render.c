@@ -22,20 +22,6 @@ GLuint vbo;
 GLuint tex;
 GLuint shader;
 
-bool forward = false;
-bool left = false;
-bool right = false;
-bool back = false;
-bool up = false;
-bool down = false;
-
-bool first_mouse = true;
-float last_x;
-float last_y;
-float yaw = -90.0f;
-float pitch = 0.0f;
-float speed = 1.0f;
-
 raytracer r;
 
 void gl_realtime_render(raytracer rt)
@@ -69,10 +55,11 @@ GLFWwindow *gl_init(config c)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE , GL_TRUE);
+	//glfwWindowHint(GLFW_RESIZABLE , GL_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE , GL_FALSE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 	
-	GLFWwindow *window = NULL;
+       	GLFWwindow *window = NULL;
 	if(c.fullscreen) {
 		log_msg(INFO, "Using fullscreen mode\n");
 		GLFWmonitor* mon = glfwGetPrimaryMonitor ();
@@ -98,7 +85,7 @@ GLFWwindow *gl_init(config c)
 	glfwSetCursorPosCallback(window, gl_mouse_callback);
 	glfwSetScrollCallback(window, gl_scroll_callback);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 	
 	// start GLEW extension handler
@@ -118,10 +105,20 @@ GLFWwindow *gl_init(config c)
 		glGetString(GL_RENDERER),
 		glGetString(GL_VERSION));
 
+	//set up global state
 	previous_time = 0;
 	frame_count = 0;
-	last_x = c.width/2;
-	last_y = c.height/2;
+	r.state.last_x = c.width/2;
+	r.state.last_y = c.height/2;
+	
+	glfwGetCursorPos(window, &r.state.last_x, &r.state.last_y);
+
+	r.state.forward = false;
+	r.state.left = false;
+	r.state.right = false;
+	r.state.back = false;
+	r.state.up = false;
+	r.state.down = false;
 	
 	//setup rendering
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -167,31 +164,40 @@ void gl_update(GLFWwindow *window)
 {
 	update_fps_counter(window);    
 	
-	if(forward) {
-		camera_forward(&r.camera, speed);
+	if(r.state.forward) {
+		camera_forward(&r.camera, r.state.speed);
 	}
-	if(left) {
-		camera_left(&r.camera, speed);
+	if(r.state.left) {
+		camera_left(&r.camera, r.state.speed);
 	}
-	if(right) {
-		camera_right(&r.camera, speed);
+	if(r.state.right) {
+		camera_right(&r.camera, r.state.speed);
 	}
-	if(back) {
-		camera_backward(&r.camera, speed);
+	if(r.state.back) {
+		camera_backward(&r.camera, r.state.speed);
 	}
-	if(up) {
-		camera_up(&r.camera, speed);	
+	if(r.state.up) {
+		camera_up(&r.camera, r.state.speed);	
 	}
-	if(down) {
-		camera_down(&r.camera, speed);	
+	if(r.state.down) {
+		camera_down(&r.camera, r.state.speed);	
 	}
-	printf("position: %f, %f, %f direction: %f, %f, %f\n",
-	       r.camera.position.x,
-	       r.camera.position.y,
-	       r.camera.position.z,
-	       r.camera.direction.x,
-	       r.camera.direction.y,
-	       r.camera.direction.z);
+	log_msg(DEBUG, "position: %f, %f, %f\n direction: %f, %f, %f\n up: %f, %f, %f\n right: %f, %f, %f\n",
+		r.camera.position.x,
+		r.camera.position.y,
+		r.camera.position.z,
+		r.camera.direction.x,
+		r.camera.direction.y,
+		r.camera.direction.z,
+		r.camera.up.x,
+		r.camera.up.y,
+		r.camera.up.z,
+		r.camera.right.x,
+		r.camera.right.y,
+		r.camera.right.z);
+	log_msg(DEBUG, "f:%d, b:%d, l:%d. r:%d, u:%d, d:%d\n",
+		r.state.forward, r.state.back, r.state.left, r.state.right, r.state.up, r.state.down);
+	
 }
 
 void gl_cleanup(GLFWwindow *window)
@@ -262,73 +268,68 @@ void gl_key_callback(GLFWwindow* window, int key, int scancode, int action, int 
 
 	if(action == GLFW_PRESS) {
 		if(key == GLFW_KEY_W) {
-			forward = true;
+			r.state.forward = true;
 		}
 		if(key == GLFW_KEY_A) {
-			left = true;
+			r.state.left = true;
 		}
 		if(key == GLFW_KEY_S) {
-			back = true;
+			r.state.back = true;
 		}
 		if(key == GLFW_KEY_D) {
-			right = true;
+			r.state.right = true;
 		}
 		if(key == GLFW_KEY_Q) {
-			up = true;
+			r.state.up = true;
 		}
 		if(key == GLFW_KEY_E) {
-			down = true;
+			r.state.down = true;
 		}
 	}
 	else if(action == GLFW_RELEASE) {
 		if(key == GLFW_KEY_W) {
-			forward = false;
+			r.state.forward = false;
 		}
 		if(key == GLFW_KEY_A) {
-			left = false;
+			r.state.left = false;
 		}
 		if(key == GLFW_KEY_S) {
-			back = false;
+			r.state.back = false;
 		}
 		if(key == GLFW_KEY_D) {
-			right = false;
+			r.state.right = false;
 		}
 		if(key == GLFW_KEY_Q) {
-			up = false;
+			r.state.up = false;
 		}
 		if(key == GLFW_KEY_E) {
-			down = false;
+			r.state.down = false;
 		}	
 	}
 	
 }
 void gl_mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if(first_mouse)
-	{
-		last_x = xpos;
-		last_y = ypos;
-		first_mouse = false;
-	}
+	float xoffset = xpos - r.state.last_x;
+	float yoffset = ypos - r.state.last_y;
 	
-	float xoffset = xpos - last_x;
-	float yoffset = last_y - ypos; 
-	last_x = xpos;
-	last_y = ypos;
+	r.state.last_x = xpos;
+	r.state.last_y = ypos;
 
-	float sensitivity = 0.05;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	yaw   += xoffset;
-	pitch += yoffset;
-
-	if(pitch > 89.0f)
-		pitch = 89.0f;
-	if(pitch < -89.0f)
-		pitch = -89.0f;
-
-	camera_rotate(&r.camera, pitch, yaw);
+	xoffset *= r.state.sensitivity;
+	yoffset *= r.state.sensitivity;
+	
+        r.state.yaw   += xoffset;
+        r.state.pitch += yoffset;
+	
+	if (r.state.pitch > 89.0f) {
+		r.state.pitch = 89.0f;
+	}
+	if (r.state.pitch < -89.0f) {
+	        r.state.pitch = -89.0f;
+	}
+        
+	camera_rotate(&r.camera, r.state.pitch, r.state.yaw);
 }
 
 void gl_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -339,7 +340,7 @@ void gl_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 GLuint load_shader(const char *filename, GLenum shadertype)
 {
 	FILE *fp = fopen(filename, "r");
-	log_msg(INFO, "Reading %s in\n", filename);
+	log_msg(INFO, "Reading in %s in\n", filename);
 	fseek(fp, 0L, SEEK_END);
 	size_t size = ftell(fp);
 	rewind(fp);
@@ -353,7 +354,7 @@ GLuint load_shader(const char *filename, GLenum shadertype)
 	fclose(fp);
 	GLuint shader_prog = glCreateShader(shadertype);
 	glShaderSource(shader_prog, 1, (const GLchar * const *)&buffer, NULL);
-	log_msg(INFO, "Compliling %s\n", filename);
+	log_msg(INFO, "Compiling %s\n", filename);
 	glCompileShader(shader_prog);
 
 	GLint success;

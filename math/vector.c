@@ -52,7 +52,7 @@ vec3_t vec3_length(const vec3 u)
 	return f;
 }
 
-vec3 vec3_normalise(const vec3 u)
+vec3 vec3_normalize(const vec3 u)
 {
 	vec3_t f = sqrt(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2));
 	vec3 w = (vec3){u.x/f, u.y/f, u.z/f};
@@ -129,7 +129,7 @@ vec4_t vec4_length(const vec4 u)
 	return f;
 }
 
-vec4 vec4_normalise(const vec4 u)
+vec4 vec4_normalize(const vec4 u)
 {
 	vec4_t f = sqrt(powf(u.x, 2) + powf(u.y, 2) + powf(u.z, 2) + powf(u.w, 2));
 	vec4 w = (vec4){u.x/f, u.y/f, u.z/f, u.w/f};
