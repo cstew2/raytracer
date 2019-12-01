@@ -42,8 +42,9 @@ raytracer raytracer_test(config c)
 {
 	log_msg(INFO, "Initializing Raytracing Test scene\n");
 	camera cam = camera_init(vec3_new(10.0, 5.0, 10.0),
-				 vec3_new(0.0, 1.0, 0.0),
+				 vec3_new(1.0, 0.0, 0.0),
 				 vec3_new(0.0, 0.0, 1.0),
+				 vec3_new(0.0, 1.0, 0.0),
 				 c.width,
 				 c.height,
 				 c.fov);
