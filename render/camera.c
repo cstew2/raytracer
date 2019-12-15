@@ -13,6 +13,7 @@ camera camera_init(vec3 p, vec3 d, vec3 u, vec3 r, int width, int height, float 
 	c.position = p;
 	c.direction = vec3_normalize(d);
 	c.up = vec3_normalize(u);
+	
 	c.right = vec3_normalize(r);
 
 	c.fov = fov;
