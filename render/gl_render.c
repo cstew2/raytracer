@@ -246,7 +246,7 @@ void gl_window_resize_callback(GLFWwindow *w, int width, int height)
 	canvas_term(r.canvas);
 	r.canvas = canvas_init(width, height);
 	r.camera = camera_init(r.camera.position, r.camera.direction, r.camera.up, r.camera.right,
-			       width, height, r.camera.fov);
+			       width, height, 120);
 	glViewport(0, 0, width, height);
 	log_msg(INFO, "Resize - width: %i height: %i\n", width, height);
 }
