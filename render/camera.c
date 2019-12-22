@@ -13,7 +13,6 @@ camera camera_init(vec3 p, vec3 d, vec3 u, vec3 r, int width, int height, float 
 	c.position = p;
 	c.direction = vec3_normalize(d);
 	c.up = vec3_normalize(u);
-	
 	c.right = vec3_normalize(r);
 
 	c.fov = fov;
@@ -58,15 +57,13 @@ void camera_down(camera *c, float speed)
 
 void camera_rotate(camera *c, float pitch, float yaw)
 {
-	/*
-	vec3 forward;
-	forward.x = cosf(deg2rad(yaw)) * cosf(deg2rad(pitch));
-	forward.y = sin(deg2rad(yaw)) * cosf(deg2rad(pitch));
-	forward.z = sin(deg2rad(pitch));
-	c->direction = vec3_normalize(forward);
-	c->up = vec3_new(0.0, 0.0, 1.0);
-	c->right = vec3_normalize(vec3_cross(c->direction, c->up));
-	*/
+	vec3 direction;
+	
+	direction.x = cos(deg2rad(yaw)) * cos(deg2rad(pitch));
+	direction.y = cos(deg2rad(pitch)) * sin(deg2rad(yaw));
+	direction.z = sin(deg2rad(pitch));
+	
+        c->direction = vec3_normalize(direction);
 }
 
 ray generate_ray(camera c, int x, int y)

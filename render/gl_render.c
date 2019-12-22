@@ -85,7 +85,7 @@ GLFWwindow *gl_init(config c)
 	glfwSetCursorPosCallback(window, gl_mouse_callback);
 	glfwSetScrollCallback(window, gl_scroll_callback);
 
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
 	
 	// start GLEW extension handler
@@ -108,17 +108,8 @@ GLFWwindow *gl_init(config c)
 	//set up global state
 	previous_time = 0;
 	frame_count = 0;
-	r.state.last_x = c.width/2;
-	r.state.last_y = c.height/2;
 	
 	glfwGetCursorPos(window, &r.state.last_x, &r.state.last_y);
-
-	r.state.forward = false;
-	r.state.left = false;
-	r.state.right = false;
-	r.state.back = false;
-	r.state.up = false;
-	r.state.down = false;
 	
 	//setup rendering
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -311,7 +302,7 @@ void gl_key_callback(GLFWwindow* window, int key, int scancode, int action, int 
 void gl_mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	float xoffset = xpos - r.state.last_x;
-	float yoffset = ypos - r.state.last_y;
+	float yoffset = r.state.last_y - ypos;
 	
 	r.state.last_x = xpos;
 	r.state.last_y = ypos;
@@ -322,13 +313,14 @@ void gl_mouse_callback(GLFWwindow* window, double xpos, double ypos)
         r.state.yaw   += xoffset;
         r.state.pitch += yoffset;
 	
-	if (r.state.pitch > 89.0f) {
-		r.state.pitch = 89.0f;
+	if (r.state.pitch > 89.9f) {
+		r.state.pitch = 89.9f;
 	}
-	if (r.state.pitch < -89.0f) {
-	        r.state.pitch = -89.0f;
+	if (r.state.pitch < -89.9f) {
+	        r.state.pitch = -89.9f;
 	}
-        
+	
+	log_msg(DEBUG, "mouse pitch: %f, mouse yaw: %f\n", r.state.pitch, r.state.yaw);
 	camera_rotate(&r.camera, r.state.pitch, r.state.yaw);
 }
 

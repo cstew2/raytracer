@@ -15,7 +15,8 @@ static state default_state = {
 	.last_y = 0, 
 	.yaw = 0.0f,
 	.pitch = 0.0f,
-	.speed = 1.0f
+	.speed = 1.0f,
+	.sensitivity = 0.5f
 };
 
 raytracer raytracer_init(config c, camera cam, scene *objs)

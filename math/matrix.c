@@ -53,6 +53,15 @@ mat3 mat3_multiply(const mat3 x, const mat3 y)
 }
 
 
+vec3 mat3_multiply_vec(const mat3 x, const vec3 a)
+{
+	vec3 v;
+	v.x = (x.e[0] * a.x) + (x.e[1] * a.y) + (x.e[2] * a.z);
+	v.y = (x.e[3] * a.x) + (x.e[4] * a.y) + (x.e[5] * a.z);
+	v.z = (x.e[6] * a.x) + (x.e[7] * a.y) + (x.e[8] * a.z);
+	return v;
+}
+
 /* 4D Matrix*/
 mat4 mat4_new_p(const mat4_t x1, const mat4_t y1, const mat4_t z1, const mat4_t w1,
 		const mat4_t x2, const mat4_t y2, const mat4_t z2, const mat4_t w2,
@@ -106,4 +115,14 @@ mat4 mat4_multiply(const mat4 x, const mat4 y)
 	}
        
 	return m;
+}
+
+vec4 mat4_multiply_vec(const mat4 x, const vec4 a)
+{
+	vec4 v;
+	v.x = (x.e[0] *  a.x) + (x.e[1] *  a.y) + (x.e[2] *  a.z) + (x.e[3] *  a.w);
+	v.y = (x.e[3] *  a.x) + (x.e[4] *  a.y) + (x.e[5] *  a.z) + (x.e[6] *  a.w);
+	v.z = (x.e[7] *  a.x) + (x.e[8] *  a.y) + (x.e[9] *  a.z) + (x.e[10] * a.w);
+	v.w = (x.e[11] * a.x) + (x.e[12] * a.y) + (x.e[13] * a.z) + (x.e[14] * a.w);
+	return v;
 }
