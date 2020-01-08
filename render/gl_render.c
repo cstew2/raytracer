@@ -55,7 +55,6 @@ GLFWwindow *gl_init(config c)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
-	//glfwWindowHint(GLFW_RESIZABLE , GL_TRUE);
 	glfwWindowHint(GLFW_RESIZABLE , GL_FALSE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 	
@@ -246,7 +245,7 @@ void gl_window_resize_callback(GLFWwindow *w, int width, int height)
 	canvas_term(r.canvas);
 	r.canvas = canvas_init(width, height);
 	r.camera = camera_init(r.camera.position, r.camera.direction, r.camera.up, r.camera.right,
-			       width, height, 120);
+			       width, height, r.camera.fov);
 	glViewport(0, 0, width, height);
 	log_msg(INFO, "Resize - width: %i height: %i\n", width, height);
 }

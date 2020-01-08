@@ -14,13 +14,17 @@ camera camera_init(vec3 p, vec3 d, vec3 u, vec3 r, int width, int height, float 
 	c.direction = vec3_normalize(d);
 	c.up = vec3_normalize(u);
 	c.right = vec3_normalize(r);
-
+	
 	c.fov = fov;
 	c.aspect_ratio = width/height;
 	c.tanfov = tan(deg2rad(c.fov/2));
 	
 	c.width = width;
 	c.height = height;
+
+	c.w_p = vec3_add(vec3_sub(vec3_scale(c.right, -c.width/2),
+				  vec3_scale(c.up, c.height/2)),
+			 vec3_scale(c.direction, (c.height/2)/c.tanfov));
 	
 	return c;
 }
@@ -66,17 +70,16 @@ void camera_rotate(camera *c, float pitch, float yaw)
         c->direction = vec3_normalize(direction);
 	c->right = vec3_normalize(vec3_cross(vec3_new(0.0, 0.0, 1.0), c->direction));
 	c->up = vec3_normalize(vec3_cross(c->direction, c->right));
+
+	c->w_p = vec3_add(vec3_sub(vec3_scale(c->right, -c->width/2),
+				   vec3_scale(c->up, c->height/2)),
+			  vec3_scale(c->direction, (c->height/2)/c->tanfov));
 }
 
 ray generate_ray(camera c, int x, int y)
-{
-	//can precompute
-	vec3 w_p = vec3_add(vec3_sub(vec3_scale(c.right, -c.width/2),
-				     vec3_scale(c.up, c.height/2)),
-			    vec3_scale(c.direction, (c.height/2)/c.tanfov));
-	
+{      
 	vec3 ray_direction = vec3_normalize(vec3_add(vec3_add(vec3_scale(c.right, x),
-							 vec3_scale(c.up, y)),
-						w_p));
+							      vec3_scale(c.up, y)),
+						     c.w_p));
 	return ray_init(c.position, ray_direction);
 }

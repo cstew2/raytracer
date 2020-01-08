@@ -43,7 +43,7 @@ raytracer raytracer_test(config c)
 {
 	log_msg(INFO, "Initializing Raytracing Test scene\n");
 	camera cam = camera_init(vec3_new(-4, 7.0, 7.0),
-				 vec3_new(1.0, 0.0, 0.0),
+				 vec3_new(0.5, 0.5, 0.0),
 				 vec3_new(0.0, 0.0, 1.0),
 				 vec3_new(0.0, 1.0, 0.0),
 				 c.width,
@@ -53,12 +53,12 @@ raytracer raytracer_test(config c)
 	int plane_count = 2;
 	plane *planes = calloc(sizeof(plane), 2);
 	planes[0] = plane_new(vec3_new(0.0, 0.0, 100.0),
-			      vec3_new(0.0, 0.0, -1.0),
-			      colour_new(10, 50, 200),
-			      matte);
-	planes[1] = plane_new(vec3_new(0.0, 0.0, -10.0),
 			      vec3_new(0.0, 0.0, 1.0),
-			      colour_new(10, 200, 50),
+			      colour_new(200, 200, 200),
+			      matte);
+	planes[1] = plane_new(vec3_new(0.0, 0.0, 0.0),
+			      vec3_new(0.0, 0.0, -1.0),
+			      colour_new(50, 50, 50),
 			      matte);
 			      
 	int sphere_count = 3;
@@ -75,8 +75,8 @@ raytracer raytracer_test(config c)
 				4,
 				colour_new(0, 0, 255),
 				glass);
-			      
-	int triangle_count = 0;
+	
+	int triangle_count = 2;
 	triangle *triangles = calloc(sizeof(triangle), 2);
 	triangles[0] = triangle_new(vec3_new(0.0, 0.0, 0.0),
 				    vec3_new(1.0, 0.0, 0.0),
@@ -87,16 +87,12 @@ raytracer raytracer_test(config c)
 				    vec3_new(1.0, 0.0, 0.0),
 				    colour_new(100, 100, 100));
 	
-	int light_count = 0;
-	light *lights = calloc(sizeof(light), 2);
-	lights[0] = light_new(colour_new(0.0, 0.0, 0.0),
-			      100.0,
-			      vec3_new(0.0, 0.0, 100.0),
-			      vec3_new(0.0, 0.0, -1.0));
-	lights[1] = light_new(colour_new(0.0, 0.0, 0.0),
-			      100.0,
-			      vec3_new(0.0, 0.0, -10.0),
-			      vec3_new(0.0, 0.0, -1.0));
+	int light_count = 1;
+	light *lights = calloc(sizeof(light), 1);
+	lights[0] = light_new(colour_new(255, 255, 255),
+			      0.8,
+			      vec3_new(5.0, 7.0, 10.0),
+			      vec3_new(0.0, 0.0, 1.0));
 	
 	
 	scene *objs = scene_init();
@@ -107,8 +103,8 @@ raytracer raytracer_test(config c)
 
 	free(planes);
 	free(spheres);
-	//free(triangles);
-	//free(lights);
+	free(triangles);
+	free(lights);
 	
 	raytracer r = raytracer_init(c, cam, objs);
 		

@@ -22,12 +22,12 @@ void canvas_term(canvas c)
 
 void canvas_set_pixel(canvas c, int x, int y, colour col)
 {
-	c.screen[(c.height * x) +  y] = col;
+	c.screen[(c.width * y) + x] = col;
 }
 
 colour canvas_get_pixel(canvas c, int x, int y)
 {
-        return c.screen[(c.height * x) +  y];
+        return c.screen[(c.width * y) + x];
 }
 
 void canvas_update(canvas src, canvas dest)

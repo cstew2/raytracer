@@ -19,6 +19,8 @@ typedef struct {
 	
 	int width;
 	int height;
+
+	vec3 w_p;
 }camera;
 
 camera camera_init(vec3 p, vec3 d, vec3 u, vec3 r, int width, int height, float fov);

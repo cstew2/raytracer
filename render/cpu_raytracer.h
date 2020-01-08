@@ -14,8 +14,12 @@ typedef struct {
 	material hit_m;
 }hit_info;
 
-int cpu_trace(ray r, raytracer rt, hit_info *hi);
-colour cpu_cast_ray(ray r, raytracer rt);
-int cpu_render(raytracer rt);
+vec3 reflection(const vec3 i, const vec3 n);
+vec3 refraction(const vec3 i, const vec3 n, const float a);
+float fresnel(const vec3 i, const vec3 n, const float a);
+
+int cpu_trace(const ray r, const raytracer rt, hit_info *hi);
+colour cpu_cast_ray(const ray r, const raytracer rt);
+int cpu_render(const raytracer rt);
 
 #endif

@@ -10,8 +10,8 @@ todo soon:
       -need to change control flow for lots of stuff
 (DONE)-generate camera rays in camera.c
 
--fix camera movement(4x4 matrix transformations?)
--raytracer ray generation
+(DONE)-fix camera movement(4x4 matrix transformations?)
+(DONE)-raytracer ray generation
 -load world scene from file(another parser!)
 -utility to create world scene files
 

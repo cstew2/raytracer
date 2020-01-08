@@ -1,4 +1,4 @@
-#include "light.h"
+#include "world/light.h"
 
 light light_new(colour c, float intensity, vec3 position, vec3 direction)
 {

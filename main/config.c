@@ -18,8 +18,8 @@ static const config config_defaults = {
 	.bias = 0.1,
 	
 	//window
-	.width = 500,
-	.height = 500,
+	.width = 640,
+	.height = 360,
 	.fullscreen = false,
 	.fps = 120
 };

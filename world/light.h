@@ -1,5 +1,5 @@
-#ifndef _LIGHT_H_
-#define _LIGHT_H_
+#ifndef __LIGHT_H__
+#define __LIGHT_H__
 
 #include "math/vector.h"
 #include "world/colour.h"

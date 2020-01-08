@@ -1,19 +1,30 @@
-#include "material.h"
+#include "world/material.h"
 
 const material glass = {
-	false,
-	true,
-	true,
-	0.9,
-	0.8,
-	0.8
+	.opaque = false,
+	.ambient = 0.0,
+	.specular = 0.0,
+	.diffuse = 0.0,
+	.reflection = 0.2,
+	.refraction = 1.0
 };
 
-const material matte = {
-	true,
-	false,
-	false,
-	0.1,
-	0.0,
-	0.0
+const material mirror = {
+	.opaque = false,
+	.ambient = 0.0,
+	.specular = 0.0,
+	.diffuse = 0.0,
+	.reflection = 1.0,
+	.refraction = 0.0
 };
+
+
+const material matte = {
+	.opaque = true,
+	.ambient = 0.8,
+	.specular = 0.0,
+	.diffuse = 0.1,
+	.reflection = 0.0,
+	.refraction = 0.0
+};
+

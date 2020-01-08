@@ -10,11 +10,11 @@ CFLAGS          := -std=c11 -I.
 CUFLAGS		:= 
 
 DCFLAGS         := -g -ggdb3 -O0 -Wall -pedantic -Wextra
-RCFLAGS         := -O2 -ftree-loop-vectorize -ftree-vectorize -s -march=native
+RCFLAGS         := -O2 -ftree-loop-vectorize -ftree-vectorize -finline-functions -funswitch-loops -s -march=native
 PCFLAGS		:=
 
 DCUFLAGS	:= -g -ggdb3 -O0 -Wall -pedantic -Wextra 
-RCUFLAGS	:= -O2 -ftree-loop-vectorize -ftree-vectorize -s -DNDEBUG -march=native
+RCUFLAGS	:= -O2 -ftree-loop-vectorize -ftree-vectorize -finline-functions -funswitch-loops -s -march=native
 PCUFLAGS	:= -pg
 
 LIBS            := 
