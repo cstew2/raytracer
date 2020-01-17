@@ -39,7 +39,7 @@ int fb_init(config c)
 	}
 	
 	char *fb_addr = mmap(NULL, fb_size, PROT_READ | PROT_WRITE, MAP_SHARED, fb_fd, 0);
-	if(fb_addr == -1) {
+	if(fb_addr == MAP_FAILED) {
 		log_msg(ERROR, "");
 		return -1;
 	}

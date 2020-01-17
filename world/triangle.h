@@ -11,10 +11,11 @@ typedef struct {
 	vec3 v2;
 	vec3 v3;
 	colour c;
-	material h;
+	material m;
 }triangle;
 
 triangle triangle_new(vec3 v1, vec3 v2, vec3 v3, colour c);
-int triangle_intersect(ray r, triangle t, vec3 *intersect);
+int triangle_intersect(ray r, triangle t, float *tt);
+void triangle_hit(ray r, float tt, triangle t, hit_info *hi);
 	
 #endif

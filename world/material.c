@@ -1,7 +1,7 @@
 #include "world/material.h"
 
 const material glass = {
-	.opaque = false,
+	.opacity = 0.0,
 	.ambient = 0.0,
 	.specular = 0.0,
 	.diffuse = 0.0,
@@ -10,7 +10,7 @@ const material glass = {
 };
 
 const material mirror = {
-	.opaque = false,
+	.opacity = 0.0,
 	.ambient = 0.0,
 	.specular = 0.0,
 	.diffuse = 0.0,
@@ -20,7 +20,7 @@ const material mirror = {
 
 
 const material matte = {
-	.opaque = true,
+	.opacity = 0.0,
 	.ambient = 0.8,
 	.specular = 0.0,
 	.diffuse = 0.1,

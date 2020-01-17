@@ -10,9 +10,9 @@ triangle triangle_new(vec3 v1, vec3 v2, vec3 v3, colour c)
 	return t;
 }
 
-int triangle_intersect(ray r, triangle t, vec3 *intersect)
+int triangle_intersect(ray r, triangle t, float *tt)
 {
-	const float EPSILON = 0.0000001;
+	const float EPSILON = 1e-6;
 	vec3 e1;
 	vec3 e2;
 	vec3 h;
@@ -46,10 +46,18 @@ int triangle_intersect(ray r, triangle t, vec3 *intersect)
 	}
 	float z = vec3_dot(e2, q) * f;
 	if(z > EPSILON) {
-		*intersect = vec3_scale(vec3_add(r.position, r.direction), z);
+		*tt = z;
 	}
 	else {
 		return -1;
 	}
 	return -1;
+}
+
+void triangle_hit(ray r, float tt, triangle t, hit_info *hi)
+{
+	hi->hit_c = t.c;
+	hi->hit_p = ray_at_t(r, tt);
+	hi->hit_n = vec3_normalize(vec3_cross(vec3_sub(t.v2, t.v1), vec3_sub(t.v3, t.v1)));
+	hi->hit_m = t.m;
 }

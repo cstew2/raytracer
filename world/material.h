@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 typedef struct {
-	bool opaque;
+	float opacity;
 	float ambient;
 	float specular;
 	float diffuse;

@@ -13,65 +13,38 @@
 
 vec3 reflection(const vec3 i, const vec3 n)
 {
+	//r=i-2(n.i)n
 	return vec3_sub(i, vec3_scale(n, 2*vec3_dot(i, n)));
 }
 
-vec3 refraction(const vec3 i, const vec3 n, const float a)
+int refraction(const vec3 i, const vec3 n, const float a, vec3 *r)
 {
-	float cosi = clamp(vec3_dot(i, n), -1, 1); 
-	float etai = 1;
-	float etat = ior; 
-	if(cosi < 0) {
-		cosi = -cosi;
-		
+	//n.sin(theta)=n'.sin(theta')
+	vec3 ni = vec3_normalize(i);
+	float dt = vec3_dot(ni, n);
+	float disc = 1.0 - a*a*(1*dt*dt);
+	if(disc > 0) {
+		*r = vec3_sub(vec3_scale(vec3_sub(ni, vec3_scale(n, dt)), a), vec3_scale(n, disc));
+		return true;
 	}
-	else {
-		etai = ior;
-	        etat = 1;
-	
-	}
-	float eta = etai / etat; 
-	float k = 1 - eta * eta * (1 - cosi * cosi); 
-	return k < 0 ? 0 : eta * I + (eta * cosi - sqrtf(k)) * n;
+	return false;
 }
 
-float fresnel(const vec3 i, const vec3 n, const float a)
+int fresnel(const vec3 i, const vec3 n, const float a, vec3 *r)
 {
-	float cosi = clamp(vec3_dot(i, n), -1, 1); 
-	float etai = 1;
-	float etat = ior; 
-	if (cosi > 0) {
-		std::swap(etai, etat);
-	} 
-	// Compute sini using Snell's law
-	float sint = etai / etat * sqrtf(maxf(0.0, 1 - cosi * cosi)); 
-	// Total internal reflection
-	if (sint >= 1) { 
-		return = 1; 
-	} 
-	else { 
-		float cost = sqrtf(maxf(0.f, 1 - sint * sint)); 
-		cosi = fabsf(cosi); 
-		float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost)); 
-		float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost)); 
-		return (Rs * Rs + Rp * Rp) / 2; 
-	} 
-	// As a consequence of the conservation of energy, transmittance is given by:
-	// kt = 1 - kr;	
+	
 }
 
 int cpu_trace(const ray r, const raytracer rt, hit_info *hi)
 {
 	float t_near = 1.0/0.0;
 	float t;
+	
 	for(int i=0; i < rt.objects->sphere_count; i++) {
 		if(sphere_intersect(r, rt.objects->spheres[i], &t)) {
 			if(t_near > t) {
-				hi->hit_c = rt.objects->spheres[i].c;
-				hi->hit_n = vec3_new(0, 0, 0);
-				hi->hit_p = vec3_new(0, 0, 0);
-				hi->hit_m = rt.objects->spheres[i].m;
 				t_near = t;
+				sphere_hit(r, t, rt.objects->spheres[i], hi);
 			}
 		}
 	}
@@ -79,11 +52,8 @@ int cpu_trace(const ray r, const raytracer rt, hit_info *hi)
 	for(int i=0; i < rt.objects->plane_count; i++) {
 		if(plane_intersect(r, rt.objects->planes[i], &t)) {
 			if(t_near > t) {
-				hi->hit_c = rt.objects->planes[i].c;
-				hi->hit_n = rt.objects->planes[i].normal;
-				hi->hit_p = vec3_new(0, 0, 0);
-				hi->hit_m = rt.objects->planes[i].m;
 				t_near = t;
+				plane_hit(r, t, rt.objects->planes[i], hi);
 			}
 		}	
 	}
@@ -95,11 +65,13 @@ colour cpu_cast_ray(const ray r, const raytracer rt)
 {
 	hit_info hi;
 	cpu_trace(r, rt, &hi);
-
-	if(hi.hit_m.opaque) {
+	if() {
 		
 	}
-	else {
+	else if() {
+		
+	}
+	else if() {
 		
 	}
 	

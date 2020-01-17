@@ -57,3 +57,11 @@ int sphere_intersect(ray r, sphere s, float *t)
 	*t = t0;
 	return 1;
 }
+
+void sphere_hit(ray r, float t, sphere s, hit_info *hi)
+{
+	hi->hit_c = s.c;
+	hi->hit_p = ray_at_t(r, t);
+	hi->hit_n = vec3_normalize(vec3_sub(hi->hit_p, s.position));
+	hi->hit_m = s.m;
+}

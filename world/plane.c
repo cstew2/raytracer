@@ -1,4 +1,7 @@
+#include <math.h>
+
 #include "world/plane.h"
+
 
 plane plane_new(vec3 p, vec3 n, colour c, material m)
 {
@@ -18,4 +21,12 @@ int plane_intersect(ray r, plane p, float *t)
 		return (*t >= 0);
 	}
 	return 0;
+}
+
+void plane_hit(ray r, float t, plane p, hit_info *hi)
+{
+	hi->hit_c = p.c;
+	hi->hit_p = ray_at_t(r, t);
+	hi->hit_n = p.normal;
+	hi->hit_m = p.m;
 }

@@ -4,6 +4,7 @@ things to think about:
 things to improve:
 -make parsing use a structure for names and types of config params
 -table pased parsing? name -> (bool, int, float, etc.)
+-harmonize loaded config file and runtime config
 
 todo soon:
 -redo how main function works
@@ -14,10 +15,19 @@ todo soon:
 (DONE)-raytracer ray generation
 -load world scene from file(another parser!)
 -utility to create world scene files
+-light sources and shadows
 
-raytracing
+raytracing quality:
+	   -reflections
+	   -refractions
+	   -shading
+	   -materials
+	   -textures
+
+raytracing backends:
 	-vulkan
-	-framebuffer
+	-sdl
+	-raw framebuffer
 	-threaded implementation
 	-cuda implementation
 	-opencl implementation
@@ -39,5 +49,5 @@ todo later:
 -scripting language
 -tools(scene making,animation)
 
--voxels(and SVO)
+-voxels(and SVO, SVO DAG, Voxel marching algo)
 -polygon mesh to voxel algo
