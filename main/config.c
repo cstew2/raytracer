@@ -65,8 +65,6 @@ config parser(char *file_data)
 	{
 		name_count = 0;
 		value_count = 0;
-		name[0] = '\0';
-		value[0] = '\0';
 		//comment line
 		if(file_data[i] == '#') {
 			while(file_data[i] != '\n' && i < size) {
@@ -82,27 +80,29 @@ config parser(char *file_data)
 			while(!isalnum(file_data[i]) && i < size) {
 				i++;
 			}
-			while(isalnum(file_data[i]) && i < size) {
+			while(file_data[i] != '\n'  && i < size) {
 				value[value_count++] = file_data[i++];
 			}
-
-			if(strncmp(name, "fov", name_count)) {
+			name[name_count] = '\0';
+			value[value_count] = '\0';
+			
+			if(!strncmp(name, "fov", name_count)) {
 				c.fov = atof(value);
 			}
-			else if(strncmp(name, "draw_distance", name_count)) {
+			else if(!strncmp(name, "draw_distance", name_count)) {
 				c.draw_distance = atof(value);
 			}
-			else if(strncmp(name, "width", name_count)) {
+			else if(!strncmp(name, "width", name_count)) {
 				c.width = atoi(value);
 			}
-			else if(strncmp(name, "height", name_count)) {
+			else if(!strncmp(name, "height", name_count)) {
 				c.height = atoi(value);
 			}
-			else if(strncmp(name, "fullscreen", name_count)) {
-				c.fullscreen = strncmp(value, "true", value_count) ? true : false;
+			else if(!strncmp(name, "fullscreen", name_count)) {
+				c.fullscreen = strncmp(value, "true", value_count) ? false : true;
 			}
-			else if(strncmp(name, "fps", name_count)) {
-				c.fullscreen = atoi(value);
+			else if(!strncmp(name, "fps", name_count)) {
+				c.fps = atoi(value);
 			}
 		}
 		//all other lines skipped

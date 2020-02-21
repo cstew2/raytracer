@@ -6,7 +6,7 @@ draw_distance = 100
 max_depth = 5
 bias = 0.1
 
-width = 1600
-height = 900
-fullscreen = true
+width = 1000
+height = 1000
+fullscreen = false
 fps = 60
