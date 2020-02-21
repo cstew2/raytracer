@@ -7,6 +7,8 @@
 #include "render/ray.h"
 #include "render/raytracer.h"
 
+int ambient(const float a, const float k_a);
+int diffuse();
 vec3 reflection(const vec3 i, const vec3 n);
 int refraction(const vec3 i, const vec3 n, const float a, vec3 *r);
 int fresnel(const vec3 i, const vec3 n, const float a, vec3 *r);

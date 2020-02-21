@@ -11,6 +11,11 @@
 #include "render/ray.h"
 #include "world/scene.h"
 
+int ambient(const float a, const float k_a)
+{
+	
+}
+
 vec3 reflection(const vec3 i, const vec3 n)
 {
 	//r=i-2(n.i)n
@@ -65,13 +70,7 @@ colour cpu_cast_ray(const ray r, const raytracer rt)
 {
 	hit_info hi;
 	cpu_trace(r, rt, &hi);
-	if() {
-		
-	}
-	else if() {
-		
-	}
-	else if() {
+	if(hi.hit_m.diffuse != 0) {
 		
 	}
 	

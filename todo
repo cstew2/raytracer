@@ -1,5 +1,5 @@
 things to think about:
--modularising code?
+-modularizing code?
 
 things to improve:
 -make parsing use a structure for names and types of config params
@@ -9,6 +9,8 @@ things to improve:
 todo soon:
 -redo how main function works
       -need to change control flow for lots of stuff
+      -possibly a fucntion just for choosing the rendering api
+       and the type of raytracing(primitives or voxels)
 (DONE)-generate camera rays in camera.c
 
 (DONE)-fix camera movement(4x4 matrix transformations?)
@@ -25,6 +27,7 @@ raytracing quality:
 	   -textures
 
 raytracing backends:
+	(DONE)-opengl
 	-vulkan
 	-sdl
 	-raw framebuffer

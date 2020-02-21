@@ -3,10 +3,24 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "render/threaded_raytracer.h"
+#include <omp.h>
 
-#include "math/vector.h"
-#include "math/constants.h"
-#include "math/math.h"
-#include "render/ray.h"
-#include "world/scene.h"
+#include "render/threaded_raytracer.h"
+#include "render/cpu_raytracer.h"
+
+int threaded_render(const raytracer rt)
+{
+	ray r;
+	colour c;
+
+        #pragma omp parallel for private(r, c)
+	for(int y=0; y < rt.canvas.height; y++) {
+		for(int x=0; x < rt.canvas.width; x++) {
+			r = generate_ray(rt.camera, x, y);
+		        c = cpu_cast_ray(r, rt);
+			canvas_set_pixel(rt.canvas, x, y, c);
+			
+		}
+	}
+	return 0;
+}

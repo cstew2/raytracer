@@ -29,6 +29,11 @@ void gl_realtime_render(raytracer rt)
 	r = rt;
 	GLFWwindow *window = gl_init(rt.config);
 
+	if(!window) {
+		log_msg(ERROR, "Failed to init gl realtime rendering\n");
+		return;
+	}
+	
 	log_msg(INFO, "Starting main game loop\n");
 	while(!glfwWindowShouldClose(window)) {
 		gl_input(window);
@@ -51,7 +56,7 @@ GLFWwindow *gl_init(config c)
 	}
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
@@ -129,7 +134,8 @@ GLFWwindow *gl_init(config c)
 void gl_render(GLFWwindow *window)
 {
 	//get next from from raytracing renderer
-	cpu_render(r);
+	//cpu_render(r);
+	threaded_render(r);
 	
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, r.canvas.width, r.canvas.height, GL_RGBA,
