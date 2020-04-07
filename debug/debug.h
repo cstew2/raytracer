@@ -15,6 +15,6 @@ void log_init(LOG_LEVEL level);
 void log_term(void);
 void debug_msg(const char *fmt, ...);
 void log_msg(LOG_LEVEL level, const char *fmt, ...);
-
+void set_log_level(LOG_LEVEL level);
 
 #endif

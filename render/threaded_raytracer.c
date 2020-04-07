@@ -13,7 +13,7 @@ int threaded_render(const raytracer rt)
 	ray r;
 	colour c;
 
-        #pragma omp parallel for private(r, c)
+        #pragma omp parallel for collapse(2) private(r, c)
 	for(int y=0; y < rt.canvas.height; y++) {
 		for(int x=0; x < rt.canvas.width; x++) {
 			r = generate_ray(rt.camera, x, y);

@@ -4,11 +4,13 @@
 #include <ctype.h>
 
 #include "main/config.h"
-#include "debug/debug.h"
 
 static const config config_defaults = {
+	//log level
+	.log_level = DEBUG,
+	
 	//platform rendering
-	.raytrace_method = CPU,
+	.raytracer_method = CPU,
 	.render_method = OPENGL,
 	
 	//rendering
@@ -85,8 +87,53 @@ config parser(char *file_data)
 			}
 			name[name_count] = '\0';
 			value[value_count] = '\0';
-			
-			if(!strncmp(name, "fov", name_count)) {
+
+			if(!strncmp(name, "log_level", name_count)) {
+				if(!strncmp(value, "error", value_count)) { 
+					c.log_level = ERROR;
+				}
+				else if(!strncmp(value, "warn", value_count)) { 
+					c.log_level = WARN;
+				}
+				else if(!strncmp(value, "info", value_count)) { 
+					c.log_level = INFO;
+				}
+				else if(!strncmp(value, "debug", value_count)) { 
+					c.log_level = DEBUG;
+				}
+			}
+			else if(!strncmp(name, "raytrace_method", name_count)) {
+				if(!strncmp(value, "cpu", value_count)) { 
+					c.raytracer_method = CPU;
+				}
+				else if(!strncmp(value, "openmp", value_count)) { 
+					c.raytracer_method = OPENGL;
+				}
+				else if(!strncmp(value, "cuda", value_count)) { 
+					c.raytracer_method = VULKAN;
+				}
+				else if(!strncmp(value, "opencl", value_count)) { 
+					c.raytracer_method = SDL;
+				}
+			}
+			else if(!strncmp(name, "render_method", name_count)) {
+				if(!strncmp(value, "ppm", value_count)) { 
+					c.render_method = PPM;
+				}
+				else if(!strncmp(value, "opengl", value_count)) { 
+					c.render_method = OPENGL;
+				}
+				else if(!strncmp(value, "vulkan", value_count)) { 
+					c.render_method = VULKAN;
+				}
+				else if(!strncmp(value, "sdl", value_count)) { 
+					c.render_method = SDL;
+				}
+				else if(!strncmp(value, "linux_fb", value_count)) { 
+					c.render_method = LINUX_FB;
+				}
+			}
+			else if(!strncmp(name, "fov", name_count)) {
 				c.fov = atof(value);
 			}
 			else if(!strncmp(name, "draw_distance", name_count)) {

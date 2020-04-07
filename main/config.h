@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include "debug/debug.h"
+
 static const int BUFFER_LEN = 64;
 static const char COMMENT_PREFIX = '#';
 static const char ASSIGNMENT_SEPERATOR = '=';
@@ -17,7 +19,7 @@ typedef enum {
 
 typedef enum {
 	CPU,
-	MULTITHREADED,
+	OPENMP,
 	CUDA,
 	OPENCL
 }RAYTRACE_METHOD;
@@ -31,8 +33,11 @@ typedef enum {
 }RENDER_METHOD;
 
 typedef struct {
+	//log level
+	LOG_LEVEL log_level;
+	
 	//platform rendering
-	RAYTRACE_METHOD raytrace_method;
+	RAYTRACE_METHOD raytracer_method;
 	RENDER_METHOD render_method;
 	
 	//rendering

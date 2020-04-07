@@ -4,9 +4,6 @@
 #include <GLFW/glfw3.h>
 #include <stdbool.h>
 
-#include "render/cuda_raytracer.cuh"
-#include "render/cpu_raytracer.h"
-
 #include "main/config.h"
 
 void gl_realtime_render(raytracer rt);

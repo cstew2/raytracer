@@ -1,3 +1,5 @@
+log_level = info
+
 raytrace_method = cpu
 render_method = opengl
 
@@ -6,7 +8,7 @@ draw_distance = 100
 max_depth = 5
 bias = 0.1
 
-width = 1000
-height = 1000
+width = 800
+height = 450
 fullscreen = false
 fps = 60

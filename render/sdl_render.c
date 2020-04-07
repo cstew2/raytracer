@@ -20,31 +20,49 @@ void sdl_realtime_render(raytracer rt)
 
 sdl_data *sdl_init(raytracer rt)
 {
+	log_msg(INFO, "Initializing SDL");
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+		log_msg(ERROR, "%s\n", SDL_GetError());
 		return NULL;
 	} 	
-
+	
 	sdl_data *r = malloc(sizeof(sdl_data));
 	r->quit = false;
 	r->rt = rt;
-	
+
+	log_msg(INFO, "Creating window");
         r->window = SDL_CreateWindow("SDL Raytracer",
 				     SDL_WINDOWPOS_CENTERED,
 				     SDL_WINDOWPOS_CENTERED,
 				     rt.config.width,
 				     rt.config.height,
-				     0);
-	
+				     SDL_WINDOW_SHOWN);
+	if(!r->window) {
+		log_msg(ERROR, "%s\n", SDL_GetError());
+		return NULL;
+	}
+
+	log_msg(INFO, "Creating renderer");
 	r->renderer = SDL_CreateRenderer(r->window,
 					 -1,
-					 SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE);
+					 SDL_RENDERER_ACCELERATED |
+					 SDL_RENDERER_TARGETTEXTURE);
+	if(!r->renderer) {
+		log_msg(ERROR, "%s", SDL_GetError());
+		return NULL;
+	}
 	
+	log_msg(INFO, "Creating texture to render to");
 	r->texture = SDL_CreateTexture(r->renderer,
-				       SDL_PIXELFORMAT_BGRA8888,
-				       SDL_TEXTUREACCESS_STREAMING,
+				       SDL_PIXELFORMAT_RGBA32,
+				       SDL_TEXTUREACCESS_TARGET,
 				       rt.config.width,
 				       rt.config.height);
-
+	if(!r->texture) {
+		log_msg(ERROR, "%s", SDL_GetError());
+		return NULL;
+	}
+	
 	return r;
 }
 
@@ -69,17 +87,57 @@ void sdl_resize(sdl_data *data)
 
 void sdl_render(sdl_data *data)
 {
+	//get next from from raytracing renderer
+	//cpu_render(r);
+	threaded_render(data->rt);
+	
 	int pitch = data->rt.canvas.width * 4;
-	SDL_LockTexture(data->texture, NULL, (void **)&data->rt.canvas.screen, &pitch);
-	
-        SDL_RenderCopy(data->renderer, data->texture, NULL, NULL);
+	SDL_UpdateTexture(data->texture, NULL, (void *)data->rt.canvas.screen, pitch);
+		
+	SDL_RenderClear(data->renderer);
+	SDL_SetRenderDrawColor(data->renderer, 255, 255, 255, 255);
+
+        SDL_RenderCopyEx(data->renderer, data->texture, NULL, NULL, 0, NULL,
+			 SDL_FLIP_VERTICAL);
         SDL_RenderPresent(data->renderer);
-	
 }
 
 void sdl_update(sdl_data *data)
 {
-
+	if(data->rt.state.forward) {
+		camera_forward(&data->rt.camera, data->rt.state.speed);
+	}
+	if(data->rt.state.left) {
+		camera_left(&data->rt.camera, data->rt.state.speed);
+	}
+	if(data->rt.state.right) {
+		camera_right(&data->rt.camera, data->rt.state.speed);
+	}
+	if(data->rt.state.back) {
+		camera_backward(&data->rt.camera, data->rt.state.speed);
+	}
+	if(data->rt.state.up) {
+		camera_up(&data->rt.camera, data->rt.state.speed);	
+	}
+	if(data->rt.state.down) {
+		camera_down(&data->rt.camera, data->rt.state.speed);	
+	}
+	log_msg(DEBUG, "position: %f, %f, %f\n direction: %f, %f, %f\n up: %f, %f, %f\n right: %f, %f, %f\n",
+		data->rt.camera.position.x,
+		data->rt.camera.position.y,
+		data->rt.camera.position.z,
+		data->rt.camera.direction.x,
+		data->rt.camera.direction.y,
+		data->rt.camera.direction.z,
+		data->rt.camera.up.x,
+		data->rt.camera.up.y,
+		data->rt.camera.up.z,
+		data->rt.camera.right.x,
+		data->rt.camera.right.y,
+		data->rt.camera.right.z);
+	log_msg(DEBUG, "f:%d, b:%d, l:%d. r:%d, u:%d, d:%d\n",
+		data->rt.state.forward, data->rt.state.back, data->rt.state.left,
+		data->rt.state.right, data->rt.state.up, data->rt.state.down);
 }
 
 void sdl_input(sdl_data *data)
@@ -100,29 +158,52 @@ void sdl_input(sdl_data *data)
 				data->quit = true;
 				break;
 			case SDLK_w:
-				log_msg(INFO, "Key W down\n");
-				data->rt.camera.position.x -= 1;
+				data->rt.state.forward = true;
 				break;
 			case SDLK_a:
-				log_msg(INFO, "Key A down\n");
-				data->rt.camera.position.y += 1;
+				data->rt.state.left = true;
 				break;
 			case SDLK_s:
-				log_msg(INFO, "Key S down\n");
-				data->rt.camera.position.x += 1;
+				data->rt.state.back = true;
 				break;
 			case SDLK_d:
-				log_msg(INFO, "Key D down\n");
-				data->rt.camera.position.y -= 1;
+				data->rt.state.right = true;
+				break;
+			case SDLK_q:
+				data->rt.state.up = true;
+				break;
+			case SDLK_e:
+				data->rt.state.down = true;
 				break;
 			default:
 				break;
 			}
-			printf("position x:%f, y:%f, z:%f\n",
-			       data->rt.camera.position.x,
-			       data->rt.camera.position.y,
-			       data->rt.camera.position.z);
 			break; 
+
+		case SDL_KEYUP:
+			switch(event.key.keysym.sym) {
+			case SDLK_w:
+				data->rt.state.forward = false;
+				break;
+			case SDLK_a:
+				data->rt.state.left = false;
+				break;
+			case SDLK_s:
+				data->rt.state.back = false;
+				break;
+			case SDLK_d:
+				data->rt.state.right = false;
+				break;
+			case SDLK_q:
+				data->rt.state.up = false;
+				break;
+			case SDLK_e:
+				data->rt.state.down = false;
+				break;
+			default:
+				break;
+			}
+			break; 	
 			
 			/* Mouse button Handling */
 		case SDL_MOUSEBUTTONDOWN:
@@ -146,11 +227,9 @@ void sdl_input(sdl_data *data)
 		case SDL_MOUSEWHEEL:
 			if(event.wheel.y > 0) {
 				log_msg(INFO, "Mouse Wheel up\n");
-				data->rt.camera.position.z -= 1;
 			}
 			else if(event.wheel.y < 0) {
 				log_msg(INFO, "Mouse Wheel down\n");
-				data->rt.camera.position.z += 1;
 			}
 
 			if(event.wheel.x > 0) {
@@ -159,36 +238,39 @@ void sdl_input(sdl_data *data)
 			else if(event.wheel.x < 0) {
 				log_msg(INFO, "Mouse Wheel right\n");
 			}
-			printf("position x:%f, y:%f, z:%f\n",
-			       data->rt.camera.position.x,
-			       data->rt.camera.position.y,
-			       data->rt.camera.position.z);
 			break;
+			
 			/* Mouse movement handling */
 		case SDL_MOUSEMOTION:
-			//log_msg(INFO, "Mouse at (%d, %d)\n", mousex, mousey);
-			
-			//rotation camera about x or y
-			if(event.motion.x > data->mousex) {
-				//data->rt.camera = camera_rotate_z(data->rt.camera, PI/(360.0));
+		        ;
+			int xpos = 0;
+			int ypos = 0;
+			SDL_GetMouseState(&xpos, &ypos);
+
+			float xoffset = xpos - data->rt.state.last_x;
+			float yoffset = data->rt.state.last_y - ypos;
+	
+			data->rt.state.last_x = xpos;
+			data->rt.state.last_y = ypos;
+
+			xoffset *= data->rt.state.sensitivity;
+			yoffset *= data->rt.state.sensitivity;
+	
+			data->rt.state.yaw   += xoffset;
+			data->rt.state.pitch += yoffset;
+	
+			if (data->rt.state.pitch > 89.9f) {
+				data->rt.state.pitch = 89.9f;
 			}
-			//rotation camera about x or y
-			else if(event.motion.x < data->mousex) {
-				//data->rt.camera = camera_rotate_z(data->rt.camera, -PI/(360.0));
+			if (data->rt.state.pitch < -89.9f) {
+				data->rt.state.pitch = -89.9f;
 			}
-			//rotate camera right about z
-			else if(event.motion.y > data->mousey) {
-			}
-			//rotate camera left about z
-			else if(event.motion.y < data->mousey) {
-			}
-			printf("lookat x:%f, y:%f, z:%f\n",
-			       data->rt.camera.direction.x,
-			       data->rt.camera.direction.y,
-			       data->rt.camera.direction.z);
-			data->mousex = event.motion.x;
-			data->mousey = event.motion.y;
+	
+			log_msg(DEBUG, "mouse pitch: %f, mouse yaw: %f\n",
+				data->rt.state.pitch, data->rt.state.yaw);
+			camera_rotate(&data->rt.camera, data->rt.state.pitch, data->rt.state.yaw);
 			break;
+			
 			/* window events*/
 		case SDL_WINDOWEVENT:
 			if(event.window.event == SDL_WINDOWEVENT_RESIZED) {
@@ -201,5 +283,4 @@ void sdl_input(sdl_data *data)
 			break;
 		}
 	}
-	//log_msg(INFO, "Camera x:%f y:%f z:%f\n", cam->position.x, cam->position.y, cam->position.z);
 }

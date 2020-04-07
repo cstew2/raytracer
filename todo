@@ -12,6 +12,7 @@ todo soon:
       -possibly a fucntion just for choosing the rendering api
        and the type of raytracing(primitives or voxels)
 (DONE)-generate camera rays in camera.c
+-scalling for fullscreen mode
 
 (DONE)-fix camera movement(4x4 matrix transformations?)
 (DONE)-raytracer ray generation

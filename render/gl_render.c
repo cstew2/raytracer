@@ -9,6 +9,10 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "render/cpu_raytracer.h"
+#include "render/threaded_raytracer.h"
+#include "render/cuda_raytracer.cuh"
+
 #include "render/gl_render.h"
 
 #include "math/math.h"

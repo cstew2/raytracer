@@ -102,3 +102,8 @@ void log_msg(LOG_LEVEL level, const char *fmt, ...)
 		}
 	}
 }
+
+void set_log_level(LOG_LEVEL level)
+{
+	LEVEL = level;
+}

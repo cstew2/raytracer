@@ -80,8 +80,17 @@ int main(int argc, char **argv)
 		c = default_config();
 	}
 
-	raytracer rt = raytracer_test(c);
+	//do this for all command line options
+	if(opengl) {
+		c.render_method = OPENGL;
+	}
+
+	set_log_level(c.log_level);
 	
+	raytracer rt = raytracer_test(c);
+
+	//change this to use config
+	//refactor entry-point for render_method and raytracer method
 	if(picture) {
 		file_render(rt, filename);
 	}
