@@ -20,50 +20,58 @@ void sdl_realtime_render(raytracer rt)
 
 sdl_data *sdl_init(raytracer rt)
 {
-	log_msg(INFO, "Initializing SDL");
+	log_msg(INFO, "Initializing SDL\n");
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
 		log_msg(ERROR, "%s\n", SDL_GetError());
 		return NULL;
 	} 	
-	
-	sdl_data *r = malloc(sizeof(sdl_data));
-	r->quit = false;
-	r->rt = rt;
+		
+	sdl_data *data= malloc(sizeof(sdl_data));
+	data->quit = false;
+	data->rt = rt;
 
-	log_msg(INFO, "Creating window");
-        r->window = SDL_CreateWindow("SDL Raytracer",
+	log_msg(INFO, "Creating window\n");
+        data->window = SDL_CreateWindow("SDL Raytracer",
 				     SDL_WINDOWPOS_CENTERED,
 				     SDL_WINDOWPOS_CENTERED,
 				     rt.config.width,
 				     rt.config.height,
-				     SDL_WINDOW_SHOWN);
-	if(!r->window) {
+				     SDL_WINDOW_SHOWN |
+				     SDL_WINDOW_MOUSE_CAPTURE);
+	if(!data->window) {
 		log_msg(ERROR, "%s\n", SDL_GetError());
 		return NULL;
 	}
 
-	log_msg(INFO, "Creating renderer");
-	r->renderer = SDL_CreateRenderer(r->window,
+	log_msg(INFO, "Creating renderer\n");
+	data->renderer = SDL_CreateRenderer(data->window,
 					 -1,
 					 SDL_RENDERER_ACCELERATED |
 					 SDL_RENDERER_TARGETTEXTURE);
-	if(!r->renderer) {
-		log_msg(ERROR, "%s", SDL_GetError());
+	if(!data->renderer) {
+		log_msg(ERROR, "%s\n", SDL_GetError());
 		return NULL;
 	}
 	
-	log_msg(INFO, "Creating texture to render to");
-	r->texture = SDL_CreateTexture(r->renderer,
+	log_msg(INFO, "Creating texture to render to\n");
+	data->texture = SDL_CreateTexture(data->renderer,
 				       SDL_PIXELFORMAT_RGBA32,
 				       SDL_TEXTUREACCESS_TARGET,
 				       rt.config.width,
 				       rt.config.height);
-	if(!r->texture) {
+	if(!data->texture) {
 		log_msg(ERROR, "%s", SDL_GetError());
 		return NULL;
 	}
+
+	SDL_SetRelativeMouseMode(true);
+        SDL_GetRelativeMouseState(&rt.state.last_x, &rt.state.last_y);       
+	SDL_SetWindowGrab(data->window, true);
+
+	data->frame_count = 0;
+	data->previous_time = 0;
 	
-	return r;
+	return data;
 }
 
 void sdl_term(sdl_data *data)
@@ -104,6 +112,8 @@ void sdl_render(sdl_data *data)
 
 void sdl_update(sdl_data *data)
 {
+	sdl_update_fps_counter(data);
+	
 	if(data->rt.state.forward) {
 		camera_forward(&data->rt.camera, data->rt.state.speed);
 	}
@@ -242,17 +252,10 @@ void sdl_input(sdl_data *data)
 			
 			/* Mouse movement handling */
 		case SDL_MOUSEMOTION:
-		        ;
-			int xpos = 0;
-			int ypos = 0;
-			SDL_GetMouseState(&xpos, &ypos);
-
-			float xoffset = xpos - data->rt.state.last_x;
-			float yoffset = data->rt.state.last_y - ypos;
-	
-			data->rt.state.last_x = xpos;
-			data->rt.state.last_y = ypos;
-
+		        ;//needed for delcarations after case label
+			int xoffset = event.motion.xrel;
+			int yoffset = -event.motion.yrel;
+			
 			xoffset *= data->rt.state.sensitivity;
 			yoffset *= data->rt.state.sensitivity;
 	
@@ -265,7 +268,7 @@ void sdl_input(sdl_data *data)
 			if (data->rt.state.pitch < -89.9f) {
 				data->rt.state.pitch = -89.9f;
 			}
-	
+			
 			log_msg(DEBUG, "mouse pitch: %f, mouse yaw: %f\n",
 				data->rt.state.pitch, data->rt.state.yaw);
 			camera_rotate(&data->rt.camera, data->rt.state.pitch, data->rt.state.yaw);
@@ -282,5 +285,22 @@ void sdl_input(sdl_data *data)
 		default:
 			break;
 		}
+	}
+}
+
+void sdl_update_fps_counter(sdl_data *data)
+{
+	char tmp[64];
+
+	double current_time = SDL_GetTicks();
+	double elapsed_time = current_time - data->previous_time;
+	data->frame_count++;
+	if(elapsed_time > 0.1f) {
+		double fps = ((double)data->frame_count/elapsed_time)*1000;
+		sprintf(tmp, "SDL - Raytracer @ fps: %.2f", fps);
+		SDL_SetWindowTitle(data->window, tmp);
+		
+		data->previous_time = current_time;
+		data->frame_count = 0;
 	}
 }

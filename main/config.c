@@ -7,7 +7,7 @@
 
 static const config config_defaults = {
 	//log level
-	.log_level = DEBUG,
+	.log_level = ERROR,
 	
 	//platform rendering
 	.raytracer_method = CPU,
@@ -44,13 +44,15 @@ char *get_file(const char *filename)
 	size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	
-	char *file_buffer = calloc(size, sizeof(char));
+	char *file_buffer = calloc(size+1, sizeof(char));
 	size_t read_size = fread(file_buffer, 1, size, f);
 	if(size != read_size){
 		log_msg(WARN, "Could not read all of config file %s\n", filename);
 	}
 	fclose(f);
 
+	file_buffer[size] = '\0';
+	
 	return file_buffer;
 }
 

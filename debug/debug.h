@@ -4,10 +4,10 @@
 #include <stdio.h>
 
 typedef enum {
-	ERROR,
-	WARN,
-	INFO,
-	DEBUG,
+	ERROR = 0,
+	WARN  = 1,
+	INFO  = 2,
+	DEBUG = 3,
 }LOG_LEVEL;
 
 /* function prototypes */

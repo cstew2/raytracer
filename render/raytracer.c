@@ -51,7 +51,7 @@ raytracer raytracer_test(config c)
 				 c.fov);
 	
 	int plane_count = 2;
-	plane *planes = calloc(sizeof(plane), 2);
+	plane *planes = calloc(sizeof(plane), plane_count);
 	planes[0] = plane_new(vec3_new(0.0, 0.0, 100.0),
 			      vec3_new(0.0, 0.0, 1.0),
 			      colour_new(200, 200, 200),
@@ -62,7 +62,7 @@ raytracer raytracer_test(config c)
 			      matte);
 			      
 	int sphere_count = 3;
-	sphere *spheres = calloc(sizeof(sphere), 3);
+	sphere *spheres = calloc(sizeof(sphere), sphere_count);
 	spheres[0] = sphere_new(vec3_new(5.0, 5.0, 5.0),
 				2,
 				colour_new(255, 0, 0),
@@ -77,7 +77,7 @@ raytracer raytracer_test(config c)
 				glass);
 	
 	int triangle_count = 2;
-	triangle *triangles = calloc(sizeof(triangle), 2);
+	triangle *triangles = calloc(sizeof(triangle), triangle_count);
 	triangles[0] = triangle_new(vec3_new(0.0, 0.0, 0.0),
 				    vec3_new(1.0, 0.0, 0.0),
 				    vec3_new(0.0, 1.0, 0.0),
@@ -87,13 +87,16 @@ raytracer raytracer_test(config c)
 				    vec3_new(1.0, 0.0, 0.0),
 				    colour_new(100, 100, 100));
 	
-	int light_count = 1;
-	light *lights = calloc(sizeof(light), 1);
+	int light_count = 2;
+	light *lights = calloc(sizeof(light), light_count);
 	lights[0] = light_new(colour_new(255, 255, 255),
 			      0.8,
 			      vec3_new(5.0, 7.0, 10.0),
 			      vec3_new(0.0, 0.0, 1.0));
-	
+	lights[1] = light_new(colour_new(255, 0, 0),
+			      0.8,
+			      vec3_new(15.0, 15.0, 5.0),
+			      vec3_new(0.0, 1.0, 0.0));
 	
 	scene *objs = scene_init();
 	add_spheres(objs, sphere_count, spheres);

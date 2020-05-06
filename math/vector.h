@@ -3,6 +3,12 @@
 
 #include <stdbool.h>
 
+typedef float vec2_t;
+typedef struct {
+	vec2_t x;
+	vec2_t y;
+}vec2;
+
 typedef float vec3_t;
 typedef struct {
 	vec3_t x;
@@ -19,8 +25,12 @@ typedef struct {
 }vec4;
 
 //constants
+extern const vec2 vec2_origin;
 extern const vec3 vec3_origin;
 extern const vec4 vec4_origin;
+
+//vec3 functions
+vec2 vec2_new(const vec2_t x, const vec2_t y);
 
 //vec3 functions
 vec3 vec3_new(const vec3_t x, const vec3_t y, const vec3_t z);

@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 			else if(!strncmp(argv[i], "-f", 2)) {
 				i++;
 				if(argv[i]) {
-					filename = malloc(sizeof(char) * strlen(argv[i] + 1));
+					filename = malloc(sizeof(char) * (strlen(argv[i]) + 1));
 					strcpy(filename, argv[i]);
 				}
 				else {
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 			else if(!strncmp(argv[i], "-c", 2)) {
 				i++;
 				log_msg(INFO, "Loading configuration file: %s\n", argv[i]);
-				config_path = malloc(sizeof(char) * strlen(argv[i] + 1));
+				config_path = malloc(sizeof(char) * (strlen(argv[i]) + 1));
 				strcpy(config_path, argv[i]);
 			}
 			else if(!strncmp(argv[i], "-p", 2)) {
@@ -74,7 +74,9 @@ int main(int argc, char **argv)
 
 	//decide what to do with args 
 	if(config_path != NULL) {
-		c = parser(get_file(config_path));
+		char *f = get_file(config_path);
+		c = parser(f);
+		free(f);	      
 	}
 	else {
 		c = default_config();
@@ -88,7 +90,7 @@ int main(int argc, char **argv)
 	set_log_level(c.log_level);
 	
 	raytracer rt = raytracer_test(c);
-
+	
 	//change this to use config
 	//refactor entry-point for render_method and raytracer method
 	if(picture) {

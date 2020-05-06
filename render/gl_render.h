@@ -28,6 +28,6 @@ GLuint load_shader(const char *filename, GLenum shadertype);
 GLuint create_program(const char *vert_path, const char *frag_path);
 void init_quad(void);
 void init_texture(int window_width, int window_height);
-void update_fps_counter(GLFWwindow *w);
+void gl_update_fps_counter(GLFWwindow *w);
 
 #endif

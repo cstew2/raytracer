@@ -5,6 +5,7 @@
 
 #include "render/raytracer.h"
 #include "render/cuda_raytracer.cuh"
+#include "render/threaded_raytracer.h"
 #include "render/cpu_raytracer.h"
 
 typedef struct {
@@ -18,7 +19,8 @@ typedef struct {
 
 	bool quit;
 
-	int frame;
+	float previous_time;
+	int frame_count;
 
 	int mousex;
 	int mousey;
@@ -36,5 +38,7 @@ void sdl_resize(sdl_data *data);
 void sdl_render(sdl_data *data);
 void sdl_update(sdl_data *data);
 void sdl_input(sdl_data *data);
+
+void sdl_update_fps_counter(sdl_data *data);
 
 #endif

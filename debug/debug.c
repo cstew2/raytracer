@@ -10,7 +10,7 @@ FILE *LOG_FP;
 time_t LOG_NOW;
 char *LOG_DATE;
 
-LOG_LEVEL LEVEL = DEBUG;
+LOG_LEVEL LEVEL = ERROR;
 
 const char *LOG_FILE = "./raytracer.log";
 
@@ -48,7 +48,7 @@ void debug_msg(const char *fmt, ...)
 
 void log_msg(LOG_LEVEL level, const char *fmt, ...)
 {
-	if(level <= LEVEL) {
+	if(LEVEL >= level) {
 		if(fmt != NULL) {
 			va_list args;
 			va_list file_args;

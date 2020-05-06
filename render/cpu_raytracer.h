@@ -7,11 +7,12 @@
 #include "render/ray.h"
 #include "render/raytracer.h"
 
-int ambient(const float a, const float k_a);
-int diffuse();
-vec3 reflection(const vec3 i, const vec3 n);
-int refraction(const vec3 i, const vec3 n, const float a, vec3 *r);
-int fresnel(const vec3 i, const vec3 n, const float a, vec3 *r);
+float ambient(const float a, const float k_a);
+float diffuse();
+
+vec3 specular_reflection(const vec3 i, const vec3 n);
+vec3 refraction(const vec3 i, const vec3 n, const float a);
+float fresnel(const vec3 i, const vec3 n, const float a, const float b);
 
 int cpu_trace(const ray r, const raytracer rt, hit_info *hi);
 colour cpu_cast_ray(const ray r, const raytracer rt);

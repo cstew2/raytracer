@@ -2,8 +2,16 @@
 
 #include "math/vector.h"
 
+const vec2 vec2_origin = {0.0, 0.0};
 const vec3 vec3_origin = {0.0, 0.0, 0.0};
 const vec4 vec4_origin = {0.0, 0.0, 0.0, 0.0};
+
+//vec2 functions
+vec2 vec2_new(const vec2_t x, const vec2_t y)
+{
+	vec2 v = (vec2){x, y};
+	return v;
+}
 
 //vec3 functions
 vec3 vec3_new(const vec3_t x, const vec3_t y, const vec3_t z)

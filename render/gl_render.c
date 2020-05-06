@@ -21,12 +21,12 @@
 static double previous_time;
 static int frame_count;
 
-GLuint vao;
-GLuint vbo;
-GLuint tex;
-GLuint shader;
+static GLuint vao;
+static GLuint vbo;
+static GLuint tex;
+static GLuint shader;
 
-raytracer r;
+static raytracer r;
 
 void gl_realtime_render(raytracer rt)
 {
@@ -73,13 +73,13 @@ GLFWwindow *gl_init(config c)
 		GLFWmonitor* mon = glfwGetPrimaryMonitor ();
 		const GLFWvidmode* vmode = glfwGetVideoMode (mon);
 		window = glfwCreateWindow (vmode->width, vmode->height,
-					   "OpenGL - Voxel Raytracer", mon, NULL);
+					   "OpenGL - Raytracer", mon, NULL);
 
 	}
 	else {
 		log_msg(INFO, "Using windowed mode\n");
 		window = glfwCreateWindow(c.width, c.height,
-					  "OpenGL - Voxel Raytracer", NULL, NULL);
+					  "OpenGL - Raytracer", NULL, NULL);
 	}
 	
 	if (!window) {
@@ -162,7 +162,7 @@ void gl_input(GLFWwindow *window)
 
 void gl_update(GLFWwindow *window)
 {
-	update_fps_counter(window);    
+	gl_update_fps_counter(window);
 	
 	if(r.state.forward) {
 		camera_forward(&r.camera, r.state.speed);
@@ -435,7 +435,7 @@ void init_texture(int window_width, int window_height)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
-void update_fps_counter(GLFWwindow *w)
+void gl_update_fps_counter(GLFWwindow *w)
 {
 	char tmp[64];
 
@@ -444,7 +444,7 @@ void update_fps_counter(GLFWwindow *w)
 	frame_count++;
 	if(elapsed_time > 0.1f) {
 		double fps = (double)frame_count/elapsed_time;
-		sprintf(tmp, "OpenGL - Voxel Raytracer @ fps: %.2f", fps);
+		sprintf(tmp, "OpenGL - Raytracer @ fps: %.2f", fps);
 		glfwSetWindowTitle(w, tmp);
 
 		previous_time = current_time;
