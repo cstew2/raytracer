@@ -7,10 +7,13 @@
 #include "debug/debug.h"
 
 #include "render/raytracer.h"
+
+#if OPENGL
 #include "render/gl_render.h"
+#endif
+
 #include "render/vk_render.h"
 #include "render/sdl_render.h"
-
 #include "render/render_file.h"
 #include "main/config.h"
 
@@ -22,14 +25,15 @@ int main(int argc, char **argv)
 	char *config_path = NULL;
 	config c;
 
-	bool threads = false;
-	bool cuda = false;
-
 	bool picture = false;
 	bool opengl = false;
 	bool vulkan = false;
 	bool sdl = false;
 
+	bool threads = false;
+	bool openmp = false;
+	bool cuda = false;
+	
 	//check args
 	if(argc > 1) {
 		for(int i=0; i < argc; i++) {
@@ -68,6 +72,12 @@ int main(int argc, char **argv)
 			}
 			else if(!strncmp(argv[i], "-cuda", 5)) {
 				cuda = true;
+			}
+			else if(!strncmp(argv[i], "-openmp", 4)) {
+				openmp = true;
+			}
+			else if(!strncmp(argv[i], "-threads", 5)) {
+				threads = true;
 			}
 		}
 	}

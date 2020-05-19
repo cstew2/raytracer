@@ -4,9 +4,6 @@
 #include <SDL2/SDL.h>
 
 #include "render/raytracer.h"
-#include "render/cuda_raytracer.cuh"
-#include "render/threaded_raytracer.h"
-#include "render/cpu_raytracer.h"
 
 typedef struct {
 	SDL_Window *window;

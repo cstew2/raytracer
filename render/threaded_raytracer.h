@@ -3,6 +3,13 @@
 
 #include "render/raytracer.h"
 
-int threaded_render(const raytracer rt);
+typedef struct {
+	raytracer rt;
+	int id;
+	colour *c;
+} threaded_args;
 
+int threaded_render(const raytracer rt);
+void *threaded_render_work(void *args);
+	
 #endif

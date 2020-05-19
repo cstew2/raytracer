@@ -50,12 +50,13 @@ int cuda_render(const raytracer rt)
 {
 	ray r;
 	colour c;
-	for(int y=0; y < rt.canvas.height; y++) {
-		for(int x=0; x < rt.canvas.width; x++) {
-			r = generate_ray(rt.camera, x, y);
-		        c = cuda_cast_ray(r, rt);
-			canvas_set_pixel(rt.canvas, x, y, c);
-		}
-	}
+	
+	int x =0;
+	int y =0;
+	r = generate_ray(rt.camera, x, y);
+	c = cuda_cast_ray(r, rt);
+	canvas_set_pixel(rt.canvas, x, y, c);
+
+	
 	return 0;
 }

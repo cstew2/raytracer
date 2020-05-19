@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+#include "main/cuda_check.h"
+
 typedef float vec2_t;
 typedef struct {
 	vec2_t x;
@@ -30,7 +32,7 @@ extern const vec3 vec3_origin;
 extern const vec4 vec4_origin;
 
 //vec3 functions
-vec2 vec2_new(const vec2_t x, const vec2_t y);
+__host__ __device__ vec2 vec2_new(const vec2_t x, const vec2_t y);
 
 //vec3 functions
 vec3 vec3_new(const vec3_t x, const vec3_t y, const vec3_t z);

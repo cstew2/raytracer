@@ -2,10 +2,13 @@
 #include <stdlib.h>
 
 #include "math/constants.h"
-
 #include "render/sdl_render.h"
-
 #include "debug/debug.h"
+
+#include "render/cuda_raytracer.cuh"
+#include "render/threaded_raytracer.h"
+#include "render/openmp_raytracer.h"
+#include "render/cpu_raytracer.h"
 
 void sdl_realtime_render(raytracer rt)
 {
@@ -96,8 +99,10 @@ void sdl_resize(sdl_data *data)
 void sdl_render(sdl_data *data)
 {
 	//get next from from raytracing renderer
-	//cpu_render(r);
-	threaded_render(data->rt);
+	//cpu_render(data->r);
+	//threaded_render(data->rt);
+	//cuda_render(data->r);
+	openmp_render(data->rt);
 	
 	int pitch = data->rt.canvas.width * 4;
 	SDL_UpdateTexture(data->texture, NULL, (void *)data->rt.canvas.screen, pitch);

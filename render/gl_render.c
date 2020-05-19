@@ -11,6 +11,7 @@
 
 #include "render/cpu_raytracer.h"
 #include "render/threaded_raytracer.h"
+#include "render/openmp_raytracer.h"
 #include "render/cuda_raytracer.cuh"
 
 #include "render/gl_render.h"
@@ -140,6 +141,8 @@ void gl_render(GLFWwindow *window)
 	//get next from from raytracing renderer
 	//cpu_render(r);
 	threaded_render(r);
+	//cuda_render(r);
+	//openmp_render(r);
 	
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, r.canvas.width, r.canvas.height, GL_RGBA,
