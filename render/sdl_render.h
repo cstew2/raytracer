@@ -11,6 +11,8 @@ typedef struct {
 	SDL_Texture *texture;
 	raytracer rt;
 
+	uint32_t *pixel_buffer;
+	
 	int window_width;
 	int window_height;
 

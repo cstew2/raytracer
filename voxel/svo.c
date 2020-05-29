@@ -1,5 +1,5 @@
 #include "voxel/svo.h"
-#include "world/colour.h"
+#include "math/vector.h"
 
 svo svo_new(void)
 {
@@ -8,7 +8,7 @@ svo svo_new(void)
 }
 
 /*
-void svo_add_voxel(const svo *s, const colour c, const int children_num)
+void svo_add_voxel(const svo *s, const vec4 c, const int children_num)
 {
 	
 }

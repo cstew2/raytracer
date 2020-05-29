@@ -54,49 +54,65 @@ raytracer raytracer_test(config c)
 	plane *planes = calloc(sizeof(plane), plane_count);
 	planes[0] = plane_new(vec3_new(0.0, 0.0, 100.0),
 			      vec3_new(0.0, 0.0, 1.0),
-			      colour_new(200, 200, 200),
-			      matte);
+			      vec4_new(0.5, 0.5, 0.9, 1.0),
+			      flat);
 	planes[1] = plane_new(vec3_new(0.0, 0.0, 0.0),
 			      vec3_new(0.0, 0.0, -1.0),
-			      colour_new(50, 50, 50),
-			      matte);
+			      vec4_new(0.5, 0.9, 0.5, 1.0),
+			      flat);
 			      
-	int sphere_count = 3;
+	int sphere_count = 7;
 	sphere *spheres = calloc(sizeof(sphere), sphere_count);
 	spheres[0] = sphere_new(vec3_new(5.0, 5.0, 5.0),
 				2,
-				colour_new(255, 0, 0),
-				matte);
+				vec4_new(1.0, 0.0, 0.0, 1.0),
+				shiny);
 	spheres[1] = sphere_new(vec3_new(5.0, 10.0, 6.0),
 				3,
-				colour_new(0, 255, 0),
+				vec4_new(0.0, 1.0, 0.0, 1.0),
 				glass);
 	spheres[2] = sphere_new(vec3_new(10.0, 5.0, 7.0),
 				4,
-				colour_new(0, 0, 255),
+				vec4_new(0.0, 0.0, 1.0, 1.0),
 				glass);
+	spheres[3] = sphere_new(vec3_new(0.0, 0.0, 7.0),
+				4,
+				vec4_new(1.0, 1.0, 1.0, 1.0),
+				glass);
+	
+	spheres[4] = sphere_new(vec3_new(5.0, 0.0, 3.0),
+				4,
+				vec4_new(1.0, 0.0, 0.0, 1.0),
+				glass);
+	spheres[5] = sphere_new(vec3_new(10.0, -7.0, 3.0),
+				3,
+				vec4_new(0.0, 1.0, 0.0, 1.0),
+				matte);
+	spheres[6] = sphere_new(vec3_new(20.0, 7.0, 20.0),
+				1,
+				vec4_new(1.0, 1.0, 1.0, 1.0),
+				flat);
+
 	
 	int triangle_count = 2;
 	triangle *triangles = calloc(sizeof(triangle), triangle_count);
 	triangles[0] = triangle_new(vec3_new(0.0, 0.0, 0.0),
 				    vec3_new(1.0, 0.0, 0.0),
 				    vec3_new(0.0, 1.0, 0.0),
-				    colour_new(100, 100, 100));
+				    vec4_new(1.0, 1.0, 1.0, 1.0));
 	triangles[1] = triangle_new(vec3_new(0.0, 0.0, 0.0),
 				    vec3_new(0.0, 1.0, 0.0),
 				    vec3_new(1.0, 0.0, 0.0),
-				    colour_new(100, 100, 100));
+				    vec4_new(1.0, 1.0, 1.0, 1.0));
 	
-	int light_count = 2;
+	int light_count = 1;
 	light *lights = calloc(sizeof(light), light_count);
-	lights[0] = light_new(colour_new(255, 255, 255),
-			      0.8,
-			      vec3_new(5.0, 7.0, 10.0),
-			      vec3_new(0.0, 0.0, 1.0));
-	lights[1] = light_new(colour_new(255, 0, 0),
-			      0.8,
-			      vec3_new(15.0, 15.0, 5.0),
-			      vec3_new(0.0, 1.0, 0.0));
+	lights[0] = light_new(vec4_new(1.0, 1.0, 1.0, 1.0),
+			      1.0,
+			      1.0,
+			      vec3_new(20.0, 7.0, 20.0),
+			      vec3_new(0.0, 0.0, -1.0));
+	
 	
 	scene *objs = scene_init();
 	add_spheres(objs, sphere_count, spheres);

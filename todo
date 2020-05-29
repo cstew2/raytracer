@@ -13,7 +13,7 @@ todo soon:
        and the type of raytracing(primitives or voxels)
 (DONE)-generate camera rays in camera.c
 -scaling for fullscreen mode
--turn sdl mouse acceleration off?
+-turn sdl mouse acceleration off? (works with release, not debug?)
 
 (DONE)-fix camera movement(4x4 matrix transformations?)
 (DONE)-raytracer ray generation
@@ -33,6 +33,7 @@ raytracing backends:
 	-vulkan
 	(DONE)-sdl
 	(DONE)-threaded implementation
+	(DONE)-openmp implementation
 	-cuda implementation
 	-opencl implementation
 

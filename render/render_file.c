@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "render/render_file.h"
 #include "render/cuda_raytracer.cuh"
+
 #include "render/cpu_raytracer.h"
 #include "debug/debug.h"
-
+#include "render/render_file.h"
 
 void file_render(raytracer rt, char *filename)
 {	
@@ -17,18 +17,22 @@ void write_ppm_file(char *filename, canvas c)
 {
 	log_msg(INFO, "Writing single frame of raytracer output to %s\n", filename);
 	FILE *fp = fopen(filename, "wb");
+	if(!fp) {
+		log_msg(ERROR, "Could not write to file: %s\n", fp);
+		return;
+	}
 	fprintf(fp, "P6\n%d\n%d\n255\n", c.width, c.height);
 
-	colour col;
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
-	for(int i=0; i < c.height; i++) {
-		for(int j=0; j < c.width; j++) {
-			col = canvas_get_pixel(c, j, i);
-			r = get_channel(col, RED);
-			g = get_channel(col, GREEN);
-			b = get_channel(col, BLUE);
+	vec4 col;
+	char r;
+	char g;
+	char b;
+	for(int y=c.height-1; y >= 0; y--) {
+		for(int x=c.width-1; x >= 0; x--) {
+			col = canvas_get_pixel(c, x, y);
+			r = col.x * 255.999;
+			g = col.y * 255.999;
+			b = col.z * 255.999;
 			fwrite(&r, 1, 1, fp);
 			fwrite(&g, 1, 1, fp);
 			fwrite(&b, 1, 1, fp);

@@ -58,7 +58,7 @@ sdl_data *sdl_init(raytracer rt)
 	
 	log_msg(INFO, "Creating texture to render to\n");
 	data->texture = SDL_CreateTexture(data->renderer,
-				       SDL_PIXELFORMAT_RGBA32,
+				       SDL_PIXELFORMAT_RGBA8888,
 				       SDL_TEXTUREACCESS_TARGET,
 				       rt.config.width,
 				       rt.config.height);
@@ -68,9 +68,11 @@ sdl_data *sdl_init(raytracer rt)
 	}
 
 	SDL_SetRelativeMouseMode(true);
-        SDL_GetRelativeMouseState(&rt.state.last_x, &rt.state.last_y);       
+        SDL_GetRelativeMouseState((int *)&rt.state.last_x, (int *)&rt.state.last_y);       
 	SDL_SetWindowGrab(data->window, true);
 
+	data->pixel_buffer = calloc(sizeof(uint32_t), rt.config.width * rt.config.height);
+	
 	data->frame_count = 0;
 	data->previous_time = 0;
 	
@@ -100,12 +102,24 @@ void sdl_render(sdl_data *data)
 {
 	//get next from from raytracing renderer
 	//cpu_render(data->r);
-	//threaded_render(data->rt);
+	threaded_render(data->rt);
 	//cuda_render(data->r);
-	openmp_render(data->rt);
+	//openmp_render(data->rt);
+
+	//need to convert from 4 floats to packed 32 bit int
+	for(int j=0; j < data->rt.canvas.height; j++) {
+		for(int i=0; i < data->rt.canvas.width; i++) {
+			vec4 c = canvas_get_pixel(data->rt.canvas, i, j);
+			data->pixel_buffer[(j * data->rt.canvas.width) + i] =
+				(unsigned char)(c.x*255) << 24 | //R
+				(unsigned char)(c.y*255) << 16 | //G
+				(unsigned char)(c.z*255) << 8  | //B
+				(unsigned char)(c.w*255);        //A
+		}
+	}
 	
 	int pitch = data->rt.canvas.width * 4;
-	SDL_UpdateTexture(data->texture, NULL, (void *)data->rt.canvas.screen, pitch);
+	SDL_UpdateTexture(data->texture, NULL, (void *)data->pixel_buffer, pitch);
 		
 	SDL_RenderClear(data->renderer);
 	SDL_SetRenderDrawColor(data->renderer, 255, 255, 255, 255);

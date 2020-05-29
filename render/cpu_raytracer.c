@@ -3,59 +3,16 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "render/cpu_raytracer.h"
-
-#include "math/vector.h"
+#include "math/vector.hh"
 #include "math/constants.h"
 #include "math/math.h"
-#include "render/ray.h"
+#include "render/ray.hh"
 #include "world/scene.h"
 
-float ambient(const float a, const float k_a)
-{
-	
-	return 0;
-}
+#include "render/common_raytracer.hh"
+#include "render/cpu_raytracer.h"
 
-vec3 specular_reflection(const vec3 i, const vec3 n)
-{
-	//r=i-n(2(n.i))
-	return vec3_sub(i, vec3_scale(n, 2*vec3_dot(i, n)));
-}
-
-vec3 refraction(const vec3 i, const vec3 n, const float a)
-{
-	//
-	float cosi = clamp(-1, 1, vec3_dot(i, n));
-	float etai = 1;
-	float etat = a;
-	vec3 N = n;
-	
-	if (cosi < 0) {
-		cosi = -cosi;
-	}
-	else {
-		float temp = etai;
-		etai = etat;
-		etat = temp;
-		N = vec3_scale(n, -1);
-	}
-	float eta = etai / etat; 
-	float k = 1 - eta * eta * (1 - cosi * cosi);
-
-	if(k > 0) {
-		return vec3_add(vec3_scale(i, eta), vec3_scale(N, (eta * cosi - sqrtf(k))));
-	}
-	return vec3_origin;
-}
-
-float fresnel(const vec3 i, const vec3 n, const float a, const float b)
-{
-	
-	return 0;
-}
-
-int cpu_trace(const ray r, const raytracer rt, hit_info *hi)
+int cpu_trace(const ray r, const raytracer rt, bool shadow, hit_info *hi)
 {
 	float t_near = 1.0/0.0;
 	float t;
@@ -81,22 +38,45 @@ int cpu_trace(const ray r, const raytracer rt, hit_info *hi)
 	return t_near != 1.0/0.0;
 }
 
-colour cpu_cast_ray(const ray r, const raytracer rt)
+vec4 cpu_cast_ray(const ray r, const raytracer rt)
 {
 	hit_info hi;
-	cpu_trace(r, rt, &hi);
+	cpu_trace(r, rt, false, &hi);
+
+	vec4 c = vec4_new(0.0, 0.0, 0.0, 0.0);
 	
-	if(hi.hit_m.diffuse != 0) {
+	if(hi.hit_m.ambient > 0) {
+		c = vec4_add(c, ambient(hi.hit_c, hi.hit_m.ambient));
+	}
+
+	if(hi.hit_m.diffuse  > 0 ||
+	   hi.hit_m.specular > 0) {
+		for(int l=0; l < rt.objects->light_count; l++) {
+			light l_i = rt.objects->lights[l];
+			vec3 l = vec3_scale(l_i.direction, -1.0);
+			if(hi.hit_m.diffuse > 0) {
+				vec4 d_colour = diffuse(hi.hit_n, hi.hit_c, hi.hit_m.diffuse,
+							l, l_i.intensity, l_i.c);
+				c = vec4_add(c, d_colour);
+			}
 		
+			if(hi.hit_m.specular > 0) {
+			
+				vec4 s_colour = specular_reflection(hi.hit_n, hi.hit_c, hi.hit_m.diffuse,
+								    l, l_i.intensity, l_i.c,
+								    rt.camera.position, 1.0);
+				//c = vec4_add(c, s_colour);
+			}
+		}
 	}
 	
-	return hi.hit_c;
+	return c;
 }
 
 int cpu_render(const raytracer rt)
 {
 	ray r;
-	colour c;
+	vec4 c;
 	for(int y=0; y < rt.canvas.height; y++) {
 		for(int x=0; x < rt.canvas.width; x++) {
 			r = generate_ray(rt.camera, x, y);

@@ -19,7 +19,7 @@ int threaded_render(const raytracer rt)
 	
 	for(int t=0; t < THREAD_COUNT; t++) {
 		args[t].rt = rt;
-		args[t].c = calloc(sizeof(colour), work);
+		args[t].c = calloc(sizeof(vec4), work);
 		args[t].id = t;
 		pthread_create(&threads[t], NULL, &threaded_render_work,
 			       (void*) &args[t]);

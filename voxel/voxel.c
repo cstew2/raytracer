@@ -3,7 +3,7 @@
 #include "voxel/voxel.h"
 #include "math/bits.h"
 
-voxel voxel_new(const colour c, voxel *parent)
+voxel voxel_new(const vec4 c, voxel *parent)
 {
 	voxel v;
 	v.c = c;

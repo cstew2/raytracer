@@ -12,6 +12,9 @@ INC		+= $(filter-out render/gl_render.h \
 				render/threaded_raytracer.h, \
 		                $(wildcard render/*.h))
 
+CCSRC		+= $(wildcard render/*.cc)
+CCINC		+= $(wildcard render/*.cc)
+
 CUSRC		+= $(wildcard render/*.cu)
 CUINC		+= $(wildcard render/*.cuh)
 
@@ -36,6 +39,6 @@ LIBS		+= -lm
 CULIBS		+= -lcuda -lcudart
 MPLIBS		+= -lgomp
 THLIBS		+= -lpthread
-GLLIBS		+= -lglfw -lGLEW -lGLU -lGL 
+GLLIBS		+= -lglfw -lGLEW -lGLU -lGL
 SDLLIBS		+= -lSDL2
-VKLIBS		+= -lglfw -lvulkan   
+VKLIBS		+= -lglfw -lvulkan

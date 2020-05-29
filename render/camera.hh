@@ -1,8 +1,13 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-#include "math/vector.h"
-#include "render/ray.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "math/vector.hh"
+#include "render/ray.hh"
+#include "main/cuda_check.h"
 
 typedef struct {
 	vec3 position;
@@ -32,7 +37,10 @@ void camera_backward(camera *c, float speed);
 void camera_up(camera *c, float speed);
 void camera_down(camera *c, float speed);
 void camera_rotate(camera *c, float pitch, float yaw);
+__host__ __device__ ray generate_ray(camera c, int x, int y);
 
-ray generate_ray(camera c, int x, int y);
-
+#ifdef __cplusplus
+}
+#endif
+	
 #endif

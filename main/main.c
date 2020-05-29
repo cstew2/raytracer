@@ -12,15 +12,21 @@
 #include "render/gl_render.h"
 #endif
 
+#if VULKAN
 #include "render/vk_render.h"
+#endif
+
+#if SDL
 #include "render/sdl_render.h"
+#endif
+
 #include "render/render_file.h"
 #include "main/config.h"
 
 
 int main(int argc, char **argv)
 {
-	log_init(DEBUG);
+	log_init(ERROR);
 	char *filename = NULL;
 	char *config_path = NULL;
 	config c;
@@ -40,6 +46,9 @@ int main(int argc, char **argv)
 			if(!strncmp(argv[i], "-h", 2)) {
 				print_help();
 				return 0;
+			}
+			if(!strncmp(argv[i], "-d", 2)) {
+				set_log_level(DEBUG);
 			}
 			else if(!strncmp(argv[i], "-f", 2)) {
 				i++;
@@ -73,10 +82,10 @@ int main(int argc, char **argv)
 			else if(!strncmp(argv[i], "-cuda", 5)) {
 				cuda = true;
 			}
-			else if(!strncmp(argv[i], "-openmp", 4)) {
+			else if(!strncmp(argv[i], "-openmp", 7)) {
 				openmp = true;
 			}
-			else if(!strncmp(argv[i], "-threads", 5)) {
+			else if(!strncmp(argv[i], "-threads", 8)) {
 				threads = true;
 			}
 		}
@@ -103,7 +112,8 @@ int main(int argc, char **argv)
 	
 	//change this to use config
 	//refactor entry-point for render_method and raytracer method
-	if(picture) {
+	if(picture && filename != NULL) {
+		log_msg(INFO, "Writing to:%s\n", filename);
 		file_render(rt, filename);
 	}
 	else {
@@ -111,13 +121,25 @@ int main(int argc, char **argv)
 			log_msg(WARN, "You passed too many arguments for the render\n");
 		}
 		else if(opengl && !vulkan && !sdl) {
-			gl_realtime_render(rt);
+			#if OPENGL
+		        gl_realtime_render(rt);
+                        #else
+			log_msg(ERROR, "You did not compile with OpenGL support");
+			#endif 
 		}
 		else if(!opengl && vulkan && !sdl) {
-			vk_realtime_render(rt);
+			#if VULKAN
+		        vk_realtime_render(rt);
+			#else
+			log_msg(ERROR, "You did not compile with Vulkan support");
+			#endif 
 		}
 		else if(!opengl && !vulkan && sdl) {
+			#if SDL
 			sdl_realtime_render(rt);
+			#else
+			log_msg(ERROR, "You did not compile with SDL support");
+			#endif 
 		}
 		else if(!(opengl && vulkan && sdl)) {
 			log_msg(WARN, "No argument selected for the renderer, defaulting to opengl\n");
@@ -131,6 +153,7 @@ int main(int argc, char **argv)
 	
 	raytracer_term(rt);
 	log_term();
+	
 	if(filename != NULL) {
 		free(filename);
 	}

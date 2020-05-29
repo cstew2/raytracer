@@ -1,9 +1,9 @@
 #ifndef __SCENE_H__
 #define __SCENE_H__
 
-#include "world/plane.h"
-#include "world/sphere.h"
-#include "world/triangle.h"
+#include "world/plane.hh"
+#include "world/sphere.hh"
+#include "world/triangle.hh"
 #include "world/light.h"
 
 typedef struct {

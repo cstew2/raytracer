@@ -1,6 +1,6 @@
-#include "world/triangle.h"
+#include "world/triangle.hh"
 
-triangle triangle_new(vec3 v1, vec3 v2, vec3 v3, colour c)
+triangle triangle_new(vec3 v1, vec3 v2, vec3 v3, vec4 c)
 {
 	triangle t;
 	t.v1 = v1;

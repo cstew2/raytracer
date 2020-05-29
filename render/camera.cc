@@ -1,6 +1,10 @@
 #include <math.h>
 
-#include "render/camera.h"
+#ifdef __NVCC__
+extern "C" {
+#endif	
+
+#include "render/camera.hh"
 
 #include "math/constants.h"
 #include "math/math.h"
@@ -76,10 +80,16 @@ void camera_rotate(camera *c, float pitch, float yaw)
 			  vec3_scale(c->direction, (c->height/2)/c->tanfov));
 }
 
-ray generate_ray(camera c, int x, int y)
+
+
+__host__ __device__ ray generate_ray(camera c, int x, int y)
 {      
 	vec3 ray_direction = vec3_normalize(vec3_add(vec3_add(vec3_scale(c.right, x),
 							      vec3_scale(c.up, y)),
 						     c.w_p));
 	return ray_init(c.position, ray_direction);
 }
+
+#ifdef __NVCC__
+}
+#endif	

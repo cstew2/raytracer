@@ -15,5 +15,7 @@ typedef struct {
 extern const material glass;
 extern const material mirror;
 extern const material matte;
+extern const material shiny;
+extern const material flat;
 
 #endif

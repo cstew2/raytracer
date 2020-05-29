@@ -53,4 +53,5 @@ void scene_term(scene *s)
 	free(s->planes);
 	free(s->triangles);
 	free(s->lights);
+	free(s);
 }

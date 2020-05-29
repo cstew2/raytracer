@@ -146,7 +146,7 @@ void gl_render(GLFWwindow *window)
 	
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, r.canvas.width, r.canvas.height, GL_RGBA,
-			GL_UNSIGNED_BYTE, r.canvas.screen);
+			GL_FLOAT, r.canvas.screen);
 
 	//clear frame, draw tex to screen aligned quad
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -208,7 +208,7 @@ void gl_cleanup(GLFWwindow *window)
 	log_msg(INFO, "Terminating OpenGL Rendering setup\n");
 	log_msg(INFO, "Freeing fullscreen texture\n");
 	glTextureSubImage2D(tex, 0, 0, 0, 0, 0, GL_RGBA,
-			    GL_UNSIGNED_BYTE, NULL);
+			    GL_FLOAT, NULL);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDeleteTextures(1, &tex);
 	log_msg(INFO, "Freeing fullscreen quad VAO and VBO\n");
@@ -432,8 +432,8 @@ void init_texture(int window_width, int window_height)
 	log_msg(INFO, "Creating texture object\n");
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, window_width, window_height,
-		     0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, window_width, window_height,
+		     0, GL_RGBA, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }

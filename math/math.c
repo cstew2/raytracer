@@ -33,7 +33,13 @@ float fast_sqrt(float x)
 
 float clamp(float x, float min, float max)
 {
-	return x < min ? min : max;
+        if(x < min) {
+		return min;
+	}
+	if(x > max) {
+		return max;
+	}
+	return x;
 }
 
 float maxf(float x, float y)

@@ -1,7 +1,7 @@
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
 
-#include "vector.h"
+#include "vector.hh"
 
 typedef float mat3_t;
 typedef struct {

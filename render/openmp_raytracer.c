@@ -11,7 +11,7 @@
 int openmp_render(const raytracer rt)
 {	
 	ray r;
-	colour c;
+	vec4 c;
 
         #pragma omp parallel for collapse(2) private(r, c)
 	for(int y=0; y < rt.canvas.height; y++) {

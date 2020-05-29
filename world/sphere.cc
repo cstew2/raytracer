@@ -1,9 +1,12 @@
 #include <math.h>
 
-#include "world/sphere.h"
+#ifdef __NVCC__
+extern "C" {
+#endif
 
+#include "world/sphere.hh"
 
-sphere sphere_new(vec3 p, float r, colour c, material m)
+sphere sphere_new(vec3 p, float r, vec4 c, material m)
 {
 	sphere s;
 	s.position = p;
@@ -13,7 +16,9 @@ sphere sphere_new(vec3 p, float r, colour c, material m)
 	return s;
 }
 
-int sphere_intersect(ray r, sphere s, float *t)
+
+	
+__host__ __device__ int sphere_intersect(ray r, sphere s, float *t)
 {
 	vec3 l = vec3_sub(r.position, s.position);
 	float a = vec3_dot(r.direction, r.direction);
@@ -58,10 +63,14 @@ int sphere_intersect(ray r, sphere s, float *t)
 	return 1;
 }
 
-void sphere_hit(ray r, float t, sphere s, hit_info *hi)
+__host__ __device__ void sphere_hit(ray r, float t, sphere s, hit_info *hi)
 {
 	hi->hit_c = s.c;
 	hi->hit_p = ray_at_t(r, t);
 	hi->hit_n = vec3_normalize(vec3_sub(hi->hit_p, s.position));
 	hi->hit_m = s.m;
 }
+
+#ifdef __NVCC__
+}
+#endif	

@@ -1,9 +1,9 @@
 #ifndef __RAYTRACER_H__
 #define __RAYTRACER_H__
 
-#include "render/camera.h"
+#include "render/camera.hh"
 #include "world/scene.h"
-#include "render/canvas.h"
+#include "render/canvas.hh"
 #include "main/config.h"
 
 typedef struct {

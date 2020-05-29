@@ -1,7 +1,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "render/canvas.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+	
+#include "render/canvas.hh"
 #include "debug/debug.h"
 
 canvas canvas_init(int width, int height)
@@ -10,7 +14,7 @@ canvas canvas_init(int width, int height)
 	canvas cv;
 	cv.width = width;
 	cv.height = height;
-	cv.screen = calloc(width * height, sizeof(colour));
+	cv.screen = (vec4 *) calloc(width * height, sizeof(vec4));
 	return cv;
 }
 
@@ -20,12 +24,12 @@ void canvas_term(canvas c)
 	free(c.screen);
 }
 
-void canvas_set_pixel(canvas c, int x, int y, colour col)
+void canvas_set_pixel(canvas c, int x, int y, vec4 vec4)
 {
-	c.screen[(c.width * y) + x] = col;
+	c.screen[(c.width * y) + x] = vec4;
 }
 
-colour canvas_get_pixel(canvas c, int x, int y)
+vec4 canvas_get_pixel(canvas c, int x, int y)
 {
         return c.screen[(c.width * y) + x];
 }
@@ -38,3 +42,7 @@ void canvas_update(canvas src, canvas dest)
 	}
 	memcpy(src.screen, dest.screen, src.width * src.height);
 }
+
+#ifdef __cplusplus
+}
+#endif

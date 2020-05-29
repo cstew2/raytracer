@@ -6,7 +6,7 @@
 typedef struct {
 	raytracer rt;
 	int id;
-	colour *c;
+	vec4 *c;
 } threaded_args;
 
 int threaded_render(const raytracer rt);
