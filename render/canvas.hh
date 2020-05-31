@@ -16,7 +16,7 @@ typedef struct {
 
 canvas canvas_init(int width, int height);
 void canvas_term(canvas);
-__host__ __device__ void canvas_set_pixel(canvas c, int x, int y, vec4 vec4);
+__host__ __device__ void canvas_set_pixel(canvas *c, int x, int y, vec4 colour);
 vec4 canvas_get_pixel(canvas c, int x, int y);
 void canvas_update(canvas src, canvas dest);
 

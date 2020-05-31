@@ -24,9 +24,9 @@ void write_ppm_file(char *filename, canvas c)
 	fprintf(fp, "P6\n%d\n%d\n255\n", c.width, c.height);
 
 	vec4 col;
-	char r;
-	char g;
-	char b;
+	unsigned char r;
+	unsigned char g;
+	unsigned char b;
 	for(int y=c.height-1; y >= 0; y--) {
 		for(int x=c.width-1; x >= 0; x--) {
 			col = canvas_get_pixel(c, x, y);

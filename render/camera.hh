@@ -37,7 +37,7 @@ void camera_backward(camera *c, float speed);
 void camera_up(camera *c, float speed);
 void camera_down(camera *c, float speed);
 void camera_rotate(camera *c, float pitch, float yaw);
-__host__ __device__ ray generate_ray(camera c, int x, int y);
+__host__ __device__ ray generate_ray(camera *c, int x, int y);
 
 #ifdef __cplusplus
 }

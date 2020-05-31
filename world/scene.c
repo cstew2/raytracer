@@ -19,6 +19,15 @@ scene *scene_init(void)
 	return s;
 }
 
+void scene_term(scene *s)
+{
+	free(s->spheres);
+	free(s->planes);
+	free(s->triangles);
+	free(s->lights);
+	free(s);
+}
+
 void add_spheres(scene *s, int sphere_count, sphere *to_add)
 {
 	s->spheres = calloc(sizeof(sphere), sphere_count);
@@ -47,11 +56,4 @@ void add_lights(scene *s, int light_count, light *to_add)
 	s->light_count += light_count;
 }
 
-void scene_term(scene *s)
-{
-	free(s->spheres);
-	free(s->planes);
-	free(s->triangles);
-	free(s->lights);
-	free(s);
-}
+

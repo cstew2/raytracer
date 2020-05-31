@@ -20,6 +20,7 @@ typedef struct {
 
 scene *scene_init(void);
 void scene_term(scene *s);
+
 void add_spheres(scene *s, int sphere_count, sphere *to_add);
 void add_planes(scene *s, int plane_count, plane *to_add);
 void add_triangles(scene *s, int triangle_count, triangle *to_add);

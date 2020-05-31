@@ -82,12 +82,12 @@ void camera_rotate(camera *c, float pitch, float yaw)
 
 
 
-__host__ __device__ ray generate_ray(camera c, int x, int y)
+__host__ __device__ ray generate_ray(camera *c, int x, int y)
 {      
-	vec3 ray_direction = vec3_normalize(vec3_add(vec3_add(vec3_scale(c.right, x),
-							      vec3_scale(c.up, y)),
-						     c.w_p));
-	return ray_init(c.position, ray_direction);
+	vec3 ray_direction = vec3_normalize(vec3_add(vec3_add(vec3_scale(c->right, x),
+							      vec3_scale(c->up, y)),
+						     c->w_p));
+	return ray_init(c->position, ray_direction);
 }
 
 #ifdef __NVCC__

@@ -14,7 +14,7 @@ DCFLAGS         := -g -ggdb3 -O0 -Wall -pedantic -Wextra
 RCFLAGS         := -O3 -ftree-loop-vectorize -ftree-vectorize -finline-functions -funswitch-loops -s -march=native
 PCFLAGS		:=
 
-DCUFLAGS	:= -g -O0
+DCUFLAGS	:= -g -G -O0
 RCUFLAGS	:= -O3
 PCUFLAGS	:= -pg
 

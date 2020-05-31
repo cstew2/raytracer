@@ -15,8 +15,6 @@ sphere sphere_new(vec3 p, float r, vec4 c, material m)
 	s.m = m;
 	return s;
 }
-
-
 	
 __host__ __device__ int sphere_intersect(ray r, sphere s, float *t)
 {

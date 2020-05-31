@@ -140,8 +140,8 @@ void gl_render(GLFWwindow *window)
 {
 	//get next from from raytracing renderer
 	//cpu_render(r);
-	threaded_render(r);
-	//cuda_render(r);
+	//threaded_render(r);
+	cuda_render(r);
 	//openmp_render(r);
 	
 	glBindTexture(GL_TEXTURE_2D, tex);

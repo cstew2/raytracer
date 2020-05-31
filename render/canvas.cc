@@ -24,11 +24,11 @@ void canvas_term(canvas c)
 	free(c.screen);
 }
 
-void canvas_set_pixel(canvas c, int x, int y, vec4 vec4)
+__host__ __device__ void canvas_set_pixel(canvas *c, int x, int y, vec4 colour)
 {
-	c.screen[(c.width * y) + x] = vec4;
+	c->screen[(c->width * y) + x] = colour;
 }
-
+	
 vec4 canvas_get_pixel(canvas c, int x, int y)
 {
         return c.screen[(c.width * y) + x];

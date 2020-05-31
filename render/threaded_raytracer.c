@@ -30,7 +30,7 @@ int threaded_render(const raytracer rt)
 		for(int i=t; i < work; i++) {
 			int x = ((work*t) + i) % rt.camera.width;
 			int y = ((work*t) + i) / rt.camera.width;
-			canvas_set_pixel(rt.canvas, x, y, args[t].c[i]);
+			canvas_set_pixel(&rt.canvas, x, y, args[t].c[i]);
 		}
 		free(args[t].c);
 	}
@@ -48,7 +48,7 @@ void *threaded_render_work(void *args)
 	for(int i=0; i < work; i++) {
 		int x = (start + i) % ta->rt.camera.width;
 		int y = (start + i) / ta->rt.camera.width;
-		ray r = generate_ray(ta->rt.camera, x, y);
+		ray r = generate_ray(&ta->rt.camera, x, y);
 		ta->c[i] = cpu_cast_ray(r, ta->rt);
 	}
 	
