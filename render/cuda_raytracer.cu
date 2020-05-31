@@ -84,71 +84,83 @@ __global__ void cuda_render_kernel(const scene *objects, camera *cam, canvas *ca
 extern "C" {
 #endif
 
-int cuda_render(raytracer rt)
+cuda_rt *cuda_init(raytracer rt)
 {
-	scene *objects_d = NULL;
-	sphere *spheres_d = NULL;
-	sphere *planes_d = NULL;
-	sphere *triangles_d = NULL;
-	sphere *lights_d = NULL;
-
-	cudaMalloc(&objects_d, sizeof(scene));
-	cudaMalloc(&spheres_d, sizeof(sphere)*rt.objects->sphere_count);
-	cudaMalloc(&planes_d, sizeof(plane)*rt.objects->plane_count);
-	cudaMalloc(&triangles_d, sizeof(triangle)*rt.objects->triangle_count);
-	cudaMalloc(&lights_d, sizeof(light)*rt.objects->light_count);
+	cuda_rt *crt = (cuda_rt *) calloc(sizeof(cuda_rt), 1);
 	
-	cudaMemcpy(objects_d, rt.objects,
+	crt->objects_d = NULL;
+	crt->spheres_d = NULL;
+	crt->planes_d = NULL;
+	crt->triangles_d = NULL;
+	crt->lights_d = NULL;
+
+	cudaMalloc(&crt->objects_d, sizeof(scene));
+	cudaMalloc(&crt->spheres_d, sizeof(sphere)*rt.objects->sphere_count);
+	cudaMalloc(&crt->planes_d, sizeof(plane)*rt.objects->plane_count);
+	cudaMalloc(&crt->triangles_d, sizeof(triangle)*rt.objects->triangle_count);
+	cudaMalloc(&crt->lights_d, sizeof(light)*rt.objects->light_count);
+	
+	cudaMemcpy(crt->objects_d, rt.objects,
 		   sizeof(scene), cudaMemcpyHostToDevice);
-	cudaMemcpy(spheres_d, rt.objects->spheres,
+	cudaMemcpy(crt->spheres_d, rt.objects->spheres,
 		   sizeof(sphere)*rt.objects->sphere_count, cudaMemcpyHostToDevice);
-	cudaMemcpy(planes_d, rt.objects->planes,
+	cudaMemcpy(crt->planes_d, rt.objects->planes,
 		   sizeof(plane)*rt.objects->plane_count, cudaMemcpyHostToDevice);
-	cudaMemcpy(triangles_d, rt.objects->triangles,
+	cudaMemcpy(crt->triangles_d, rt.objects->triangles,
 		   sizeof(triangle)*rt.objects->triangle_count, cudaMemcpyHostToDevice);
-	cudaMemcpy(lights_d, rt.objects->lights,
+	cudaMemcpy(crt->lights_d, rt.objects->lights,
 		   sizeof(light)*rt.objects->light_count, cudaMemcpyHostToDevice);	
 	
-	cudaMemcpy(&(objects_d->spheres), &spheres_d, sizeof(sphere *), cudaMemcpyHostToDevice);
-	cudaMemcpy(&(objects_d->planes), &planes_d, sizeof(plane *), cudaMemcpyHostToDevice);
-	cudaMemcpy(&(objects_d->triangles), &triangles_d, sizeof(triangle *), cudaMemcpyHostToDevice);
-	cudaMemcpy(&(objects_d->lights), &lights_d, sizeof(light *), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(crt->objects_d->spheres), &crt->spheres_d, sizeof(sphere *), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(crt->objects_d->planes), &crt->planes_d, sizeof(plane *), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(crt->objects_d->triangles), &crt->triangles_d, sizeof(triangle *), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(crt->objects_d->lights), &crt->lights_d, sizeof(light *), cudaMemcpyHostToDevice);
 	
-	camera *cam_d = NULL;
-	cudaMalloc(&cam_d, sizeof(camera));
-	cudaMemcpy(cam_d, &rt.camera, sizeof(camera), cudaMemcpyHostToDevice);
+	crt->cam_d = NULL;
+	cudaMalloc(&crt->cam_d, sizeof(camera));
+	cudaMemcpy(crt->cam_d, &rt.camera, sizeof(camera), cudaMemcpyHostToDevice);
 
-	canvas *can_d = NULL;
-	vec4 *screen_d = NULL;
+	crt->can_d = NULL;
+	crt->screen_d = NULL;
 
-	cudaMalloc(&can_d, sizeof(canvas));
-	cudaMalloc(&screen_d, sizeof(vec4)*rt.canvas.width*rt.canvas.height);
+	cudaMalloc(&crt->can_d, sizeof(canvas));
+	cudaMalloc(&crt->screen_d, sizeof(vec4)*rt.canvas.width*rt.canvas.height);
 	
-	cudaMemcpy(can_d, &rt.canvas, sizeof(canvas), cudaMemcpyHostToDevice);
+	cudaMemcpy(crt->can_d, &rt.canvas, sizeof(canvas), cudaMemcpyHostToDevice);
 
-	cudaMemcpy(screen_d, rt.canvas.screen,
+	cudaMemcpy(crt->screen_d, rt.canvas.screen,
 		   sizeof(vec4)*rt.canvas.width*rt.canvas.height, cudaMemcpyHostToDevice);
-	cudaMemcpy(&(can_d->screen), &screen_d, sizeof(vec4 *), cudaMemcpyHostToDevice);
+	cudaMemcpy(&(crt->can_d->screen), &crt->screen_d, sizeof(vec4 *), cudaMemcpyHostToDevice);
+
+	return crt;
+}
+	
+void cuda_term(cuda_rt *crt)
+{
+	cudaFree(crt->screen_d);
+	cudaFree(crt->can_d);
+	cudaFree(crt->cam_d);
+	cudaFree(crt->lights_d);
+	cudaFree(crt->triangles_d);
+	cudaFree(crt->planes_d);
+	cudaFree(crt->spheres_d);
+	cudaFree(crt->objects_d);
+}
+	
+int cuda_render(raytracer rt, cuda_rt *crt)
+{
+	cudaMemcpy(crt->cam_d, &rt.camera, sizeof(camera), cudaMemcpyHostToDevice);
 	
 	dim3 threads(8, 8);
 	dim3 blocks(rt.canvas.width/threads.x,  
 		    rt.canvas.height/threads.y);
 	
-	cuda_render_kernel<<<blocks, threads>>>(objects_d, cam_d, can_d);
+	cuda_render_kernel<<<blocks, threads>>>(crt->objects_d, crt->cam_d, crt->can_d);
 
-	cudaMemcpy(rt.canvas.screen, screen_d,
+	cudaMemcpy(rt.canvas.screen, crt->screen_d,
 		   sizeof(vec4)*rt.canvas.width*rt.canvas.height, cudaMemcpyDeviceToHost);
-
-	write_ppm_file("frame.pnm", rt.canvas);
 	
-	cudaFree(screen_d);
-	cudaFree(can_d);
-	cudaFree(cam_d);
-	cudaFree(lights_d);
-	cudaFree(triangles_d);
-	cudaFree(planes_d);
-	cudaFree(spheres_d);
-	cudaFree(objects_d);
+
 	
 	return 0;
 }

@@ -29,6 +29,12 @@ static GLuint shader;
 
 static raytracer r;
 
+//
+//TEMP
+//
+
+cuda_rt *crt;
+
 void gl_realtime_render(raytracer rt)
 {
 	r = rt;
@@ -132,6 +138,12 @@ GLFWwindow *gl_init(config c)
 	
 	//setup the raytracer
 	log_msg(INFO, "Starting raytracer\n");
+
+	//
+	//TEMP
+	//
+	
+	crt = cuda_init(r);
 	
 	return window;
 }
@@ -141,7 +153,7 @@ void gl_render(GLFWwindow *window)
 	//get next from from raytracing renderer
 	//cpu_render(r);
 	//threaded_render(r);
-	cuda_render(r);
+	cuda_render(r, crt);
 	//openmp_render(r);
 	
 	glBindTexture(GL_TEXTURE_2D, tex);
