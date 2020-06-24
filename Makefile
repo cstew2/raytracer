@@ -1,6 +1,6 @@
 TARGET          := raytracer
 
-MODULES         := main math world render debug
+MODULES         := main math world render debug compute
 
 CC              := gcc
 CCCC		:=
@@ -62,7 +62,8 @@ GLLIBS		:=
 SDLLIBS		:=
 VKLIBS		:=
 
-VPATH		= $(MODULES)
+VPATH		:= $(MODULES) render/ppm render/opengl render/vulkan render/sdl \
+			      compute/cpu compute/cuda compute/openmp compute/pthread
 
 PREFIX		:= build
 BUILD 		?= debug
@@ -95,6 +96,7 @@ endif
 
 ifeq ($(CUDA), 1)
 LIBS		+= $(CULIBS)
+CFLAGS		+= -DUSE_CUDA=1
 CCCC		:= $(CUCC)
 CCCFLAGS	+= $(CUFLAGS)
 LDFLAGS		+=
@@ -108,41 +110,50 @@ endif
 ifeq ($(OPENMP), 1)
 SRC		+= $(MPSRC)
 INC		+= $(MPINC)
-CFLAGS		+= $(MPCFLAGS)
+CFLAGS		+= $(MPCFLAGS) -DUSE_OPENMP=1
 LIBS		+= $(MPLIBS)
 endif
 
 ifeq ($(PTHREAD), 1)
 SRC		+= $(THSRC)
 INC		+= $(THINC)
+CFLAGS		+= -DUSE_PTHREAD=1
 LIBS		+= $(THLIBS)
 endif
 
 ifeq ($(OPENGL), 1)
 SRC		+= $(GLSRC)
 INC		+= $(GLINC)
+CFLAGS		+= -DUSE_OPENGL=1
 LIBS		+= $(GLLIBS)
 endif
 
 ifeq ($(VULKAN), 1)
 SRC		+= $(VKSRC)
 INC		+= $(VKINC)
+CFLAGS		+= -DUSE_VULKAN=1
 LIBS		+= $(VKLIBS)
 endif
 
 ifeq ($(SDL), 1)
 SRC		+= $(SDLSRC)
 INC		+= $(SDLINC)
+CFLAGS		+= -DUSE_SDL=1
 LIBS		+= $(SDLLIBS)
 endif
-
-.PHONY: release
-release: $(PREFIX)/bin/$(TARGET)
 
 $(shell mkdir -p $(PREFIX)/obj $(PREFIX)/bin)
 
 OBJ		:= $(patsubst %.c, $(PREFIX)/obj/%.c.o,  $(filter %.c, $(notdir $(SRC))))
 CCOBJ		:= $(patsubst %.cc,$(PREFIX)/obj/%.cc.o, $(filter %.cc,$(notdir $(CCSRC))))
+
+$(info $(SRC))
+$(info $(CUSRC))
+$(info $(CCSRC))
+
+$(info $(OBJ))
+$(info $(CUOBJ))
+$(info $(CCOBJ))
 
 $(PREFIX)/bin/$(TARGET): $(OBJ) $(CCOBJ) $(CUOBJ) $(CUTARGET)
 	@$(LD) $(LDFLAGS) $^ -o $@ $(LIBS)

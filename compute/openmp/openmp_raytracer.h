@@ -3,6 +3,6 @@
 
 #include "render/raytracer.h"
 
-int openmp_render(const raytracer rt);
+int openmp_render(const raytracer rt, void *cuda_rt);
 
 #endif

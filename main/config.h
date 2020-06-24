@@ -19,17 +19,17 @@ typedef enum {
 
 typedef enum {
 	CPU,
+	PTHREAD,
 	OPENMP,
 	CUDA,
 	OPENCL
-}RAYTRACE_METHOD;
+}COMPUTE_METHOD;
 
 typedef enum {
 	PPM,
 	OPENGL,
 	VULKAN,
-	SDL,
-	LINUX_FB
+	SDL
 }RENDER_METHOD;
 
 typedef struct {
@@ -37,7 +37,7 @@ typedef struct {
 	LOG_LEVEL log_level;
 	
 	//platform rendering
-	RAYTRACE_METHOD raytracer_method;
+	COMPUTE_METHOD compute_method;
 	RENDER_METHOD render_method;
 	
 	//rendering

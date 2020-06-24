@@ -2,13 +2,13 @@
 #include <stdlib.h>
 
 #include "math/constants.h"
-#include "render/sdl_render.h"
+#include "render/sdl/sdl_render.h"
 #include "debug/debug.h"
 
-#include "render/cuda_raytracer.cuh"
-#include "render/threaded_raytracer.h"
-#include "render/openmp_raytracer.h"
-#include "render/cpu_raytracer.h"
+#include "compute/cuda/cuda_raytracer.cuh"
+#include "compute/pthread/pthread_raytracer.h"
+#include "compute/openmp/openmp_raytracer.h"
+#include "compute/cpu/cpu_raytracer.h"
 
 void sdl_realtime_render(raytracer rt)
 {
@@ -101,10 +101,10 @@ void sdl_resize(sdl_data *data)
 void sdl_render(sdl_data *data)
 {
 	//get next from from raytracing renderer
-	//cpu_render(data->r);
-	threaded_render(data->rt);
-	//cuda_render(data->r);
-	//openmp_render(data->rt);
+	//cpu_render(data->r, NULL);
+	threaded_render(data->rt, NULL);
+	//cuda_render(data->r, NULL);
+	//openmp_render(data->rt, NULL);
 
 	//need to convert from 4 floats to packed 32 bit int
 	for(int j=0; j < data->rt.canvas.height; j++) {

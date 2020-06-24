@@ -6,7 +6,7 @@
 #include "world/plane.hh"
 #include "render/ray.hh"
 #include "math/vector.hh"
-#include "render/common_raytracer.hh"
+#include "compute/common_raytracer.hh"
 
 #ifdef __NVCC__
 extern "C" {
@@ -29,8 +29,6 @@ typedef struct {
 #ifdef __NVCC__
 }
 #endif
-
-
 
 __device__ int cuda_trace(const ray r, const scene *objects, hit_info *hi);
 __device__ vec4 cuda_cast_ray(const ray r, const scene *objects, const camera *cam);

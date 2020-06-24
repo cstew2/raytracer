@@ -6,14 +6,14 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include "render/threaded_raytracer.h"
-#include "render/cpu_raytracer.h"
+#include "compute/pthread/pthread_raytracer.h"
+#include "compute/cpu/cpu_raytracer.h"
 
 #define THREAD_COUNT 8
 pthread_t threads[THREAD_COUNT];
 threaded_args args[THREAD_COUNT];
 
-int threaded_render(const raytracer rt)
+int threaded_render(const raytracer rt, void *cuda_rt)
 {
 	int work = (rt.camera.width*rt.camera.height)/THREAD_COUNT;
 	

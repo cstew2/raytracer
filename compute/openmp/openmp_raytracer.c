@@ -5,10 +5,10 @@
 
 #include <omp.h>
 
-#include "render/openmp_raytracer.h"
-#include "render/cpu_raytracer.h"
+#include "compute/openmp/openmp_raytracer.h"
+#include "compute/cpu/cpu_raytracer.h"
 
-int openmp_render(const raytracer rt)
+int openmp_render(const raytracer rt, void *cuda_rt)
 {	
 	ray r;
 	vec4 c;

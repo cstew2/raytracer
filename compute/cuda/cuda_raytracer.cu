@@ -6,7 +6,7 @@
 #include <cuda_runtime_api.h>
 #include <cuda.h>
 
-#include "render/cuda_raytracer.cuh"
+#include "compute/cuda/cuda_raytracer.cuh"
 
 __device__ int cuda_trace(const ray r, const scene *objects, bool shadow, hit_info *hi)
 {

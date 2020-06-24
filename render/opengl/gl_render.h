@@ -5,8 +5,9 @@
 #include <stdbool.h>
 
 #include "main/config.h"
+#include "render/raytracer.h"
 
-void gl_realtime_render(raytracer rt);
+void gl_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt););
 GLFWwindow *gl_init(config c);
 void gl_render(GLFWwindow *window);
 void gl_input(GLFWwindow *window);

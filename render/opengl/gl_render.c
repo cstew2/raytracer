@@ -9,15 +9,12 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include "render/cpu_raytracer.h"
-#include "render/threaded_raytracer.h"
-#include "render/openmp_raytracer.h"
-#include "render/cuda_raytracer.cuh"
-
-#include "render/gl_render.h"
+#include "render/opengl/gl_render.h"
 
 #include "math/math.h"
 #include "debug/debug.h"
+
+#include "compute/cuda/cuda_raytracer.cuh"
 
 static double previous_time;
 static int frame_count;
@@ -31,11 +28,10 @@ static raytracer r;
 
 //
 //TEMP
+cuda_rt *crt;
 //
 
-cuda_rt *crt;
-
-void gl_realtime_render(raytracer rt)
+void gl_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt))
 {
 	r = rt;
 	GLFWwindow *window = gl_init(rt.config);
@@ -130,7 +126,7 @@ GLFWwindow *gl_init(config c)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, c.width, c.height);
 	log_msg(INFO, "Initializing shader program\n");
-	shader = create_program("./render/quad.vert", "./render/quad.frag");
+	shader = create_program("./render/opengl/quad.vert", "./render/opengl/quad.frag");
 	log_msg(INFO, "Initializing fullscreen quad VAO and VBO\n");
 	init_quad();
 	log_msg(INFO, "Initializing fullscreen texture\n");
@@ -142,7 +138,6 @@ GLFWwindow *gl_init(config c)
 	//
 	//TEMP
 	//
-	
 	crt = cuda_init(r);
 	
 	return window;
@@ -165,7 +160,6 @@ void gl_render(GLFWwindow *window)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
 	glBindVertexArray(vao);
-	glBindTexture(GL_TEXTURE_2D, tex);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
 	glfwSwapBuffers(window);
 }

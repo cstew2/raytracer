@@ -10,7 +10,7 @@ static const config config_defaults = {
 	.log_level = ERROR,
 	
 	//platform rendering
-	.raytracer_method = CPU,
+	.compute_method = CPU,
 	.render_method = OPENGL,
 	
 	//rendering
@@ -104,18 +104,21 @@ config parser(char *file_data)
 					c.log_level = DEBUG;
 				}
 			}
-			else if(!strncmp(name, "raytrace_method", name_count)) {
+			else if(!strncmp(name, "compute_method", name_count)) {
 				if(!strncmp(value, "cpu", value_count)) { 
-					c.raytracer_method = CPU;
+					c.compute_method = CPU;
+				}
+				else if(!strncmp(value, "pthread", value_count)) { 
+					c.compute_method = PTHREAD;
 				}
 				else if(!strncmp(value, "openmp", value_count)) { 
-					c.raytracer_method = OPENGL;
+					c.compute_method = OPENMP;
 				}
 				else if(!strncmp(value, "cuda", value_count)) { 
-					c.raytracer_method = VULKAN;
+					c.compute_method = CUDA;
 				}
 				else if(!strncmp(value, "opencl", value_count)) { 
-					c.raytracer_method = SDL;
+					c.compute_method = OPENCL;
 				}
 			}
 			else if(!strncmp(name, "render_method", name_count)) {
@@ -130,9 +133,6 @@ config parser(char *file_data)
 				}
 				else if(!strncmp(value, "sdl", value_count)) { 
 					c.render_method = SDL;
-				}
-				else if(!strncmp(value, "linux_fb", value_count)) { 
-					c.render_method = LINUX_FB;
 				}
 			}
 			else if(!strncmp(name, "fov", name_count)) {

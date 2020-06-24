@@ -34,4 +34,6 @@ raytracer raytracer_init(config c, camera cam, scene *objs);
 void raytracer_term(raytracer rt);
 raytracer raytracer_test(config c);
 
+
+
 #endif

@@ -9,7 +9,7 @@ typedef struct {
 	vec4 *c;
 } threaded_args;
 
-int threaded_render(const raytracer rt);
+int threaded_render(const raytracer rt, void *cuda_rt);
 void *threaded_render_work(void *args);
 	
 #endif

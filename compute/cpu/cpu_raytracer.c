@@ -9,8 +9,8 @@
 #include "render/ray.hh"
 #include "world/scene.h"
 
-#include "render/common_raytracer.hh"
-#include "render/cpu_raytracer.h"
+#include "compute/common_raytracer.hh"
+#include "compute/cpu/cpu_raytracer.h"
 
 int cpu_trace(const ray r, const raytracer rt, bool shadow, hit_info *hi)
 {
@@ -73,7 +73,7 @@ vec4 cpu_cast_ray(const ray r, const raytracer rt)
 	return c;
 }
 
-int cpu_render(const raytracer rt)
+int cpu_render(const raytracer rt, void *cuda_rt)
 {
 	ray r;
 	vec4 c;

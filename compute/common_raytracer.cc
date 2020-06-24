@@ -6,7 +6,7 @@ extern "C" {
 
 #include "math/math.h"
 	
-#include "render/common_raytracer.hh"
+#include "compute/common_raytracer.hh"
 
 
 

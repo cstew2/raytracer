@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "render/cuda_raytracer.cuh"
+#include "compute/cuda/cuda_raytracer.cuh"
 
-#include "render/cpu_raytracer.h"
+#include "compute/cpu/cpu_raytracer.h"
 #include "debug/debug.h"
-#include "render/render_file.h"
+#include "render/ppm/render_file.h"
 
 void file_render(raytracer rt, char *filename)
 {	
-	cpu_render(rt);
+	cpu_render(rt, NULL);
 	write_ppm_file(filename, rt.canvas);
 }
 
