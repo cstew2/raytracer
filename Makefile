@@ -94,33 +94,6 @@ else
 $(error $(BUILD) is not a build profile)
 endif
 
-ifeq ($(CUDA), 1)
-LIBS		+= $(CULIBS)
-CFLAGS		+= -DUSE_CUDA=1
-CCCC		:= $(CUCC)
-CCCFLAGS	+= $(CUFLAGS)
-LDFLAGS		+=
-CUOBJ		:= $(patsubst %.cu,$(PREFIX)/obj/%.cu.o, $(filter %.cu,$(notdir $(CUSRC))))
-CUTARGET	:= $(PREFIX)/obj/cuda_code.cuo
-else
-CCCC		:= $(CC)
-CCCFLAGS	:= $(CFLAGS)
-endif
-
-ifeq ($(OPENMP), 1)
-SRC		+= $(MPSRC)
-INC		+= $(MPINC)
-CFLAGS		+= $(MPCFLAGS) -DUSE_OPENMP=1
-LIBS		+= $(MPLIBS)
-endif
-
-ifeq ($(PTHREAD), 1)
-SRC		+= $(THSRC)
-INC		+= $(THINC)
-CFLAGS		+= -DUSE_PTHREAD=1
-LIBS		+= $(THLIBS)
-endif
-
 ifeq ($(OPENGL), 1)
 SRC		+= $(GLSRC)
 INC		+= $(GLINC)
@@ -142,37 +115,56 @@ CFLAGS		+= -DUSE_SDL=1
 LIBS		+= $(SDLLIBS)
 endif
 
+ifeq ($(OPENMP), 1)
+SRC		+= $(MPSRC)
+INC		+= $(MPINC)
+CFLAGS		+= $(MPCFLAGS) -DUSE_OPENMP=1
+LIBS		+= $(MPLIBS)
+endif
+
+ifeq ($(PTHREAD), 1)
+SRC		+= $(THSRC)
+INC		+= $(THINC)
+CFLAGS		+= -DUSE_PTHREAD=1
+LIBS		+= $(THLIBS)
+endif
+
+ifeq ($(CUDA), 1)
+LIBS		+= $(CULIBS)
+CFLAGS		+= -DUSE_CUDA=1
+CCCC		:= $(CUCC)
+CCCFLAGS	+= $(CUFLAGS)
+LDFLAGS		+=
+CUOBJ		:= $(patsubst %.cu,$(PREFIX)/obj/%.cu.o, $(filter %.cu,$(notdir $(CUSRC))))
+CUTARGET	:= $(PREFIX)/obj/cuda_code.cuo
+else
+CCCC		:= $(CC)
+CCCFLAGS	:= $(CFLAGS)
+endif
+
 $(shell mkdir -p $(PREFIX)/obj $(PREFIX)/bin)
 
 OBJ		:= $(patsubst %.c, $(PREFIX)/obj/%.c.o,  $(filter %.c, $(notdir $(SRC))))
 CCOBJ		:= $(patsubst %.cc,$(PREFIX)/obj/%.cc.o, $(filter %.cc,$(notdir $(CCSRC))))
 
-$(info $(SRC))
-$(info $(CUSRC))
-$(info $(CCSRC))
-
-$(info $(OBJ))
-$(info $(CUOBJ))
-$(info $(CCOBJ))
-
 $(PREFIX)/bin/$(TARGET): $(OBJ) $(CCOBJ) $(CUOBJ) $(CUTARGET)
-	@$(LD) $(LDFLAGS) $^ -o $@ $(LIBS)
+	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS)
 	@echo [LD] Linked $^ into $@
 
 $(PREFIX)/obj/%.c.o: %.c %.h
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 	@echo [CC] Compiled $< into $@
 
 $(PREFIX)/obj/%.cu.o: %.cu %.cuh
-	@$(CUCC) $(CUFLAGS) -c $< -o $@
+	$(CUCC) $(CUFLAGS) -c $< -o $@
 	@echo [NVCC] Compiled $< into $@
 
 $(PREFIX)/obj/%.cc.o: %.cc %.hh
-	@$(CCCC) $(CCCFLAGS) -c $< -o $@
+	$(CCCC) $(CCCFLAGS) -c $< -o $@
 	@echo [CCCC] Compiled $< into $@
 
 $(CUTARGET): $(CCOBJ) $(CUOBJ)
-	@$(CULD) $(CULDFLAGS) $^ -o $@ $(CULIBS)
+	$(CULD) $(CULDFLAGS) $^ -o $@ $(CULIBS)
 	@echo [CULD] Linked $^ into $@
 
 .PHONY: rebuild

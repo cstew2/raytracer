@@ -9,7 +9,7 @@
 
 void gl_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt););
 GLFWwindow *gl_init(config c);
-void gl_render(GLFWwindow *window);
+void gl_render(GLFWwindow *window, int (*compute)(raytracer rt, void *cuda_rt));
 void gl_input(GLFWwindow *window);
 void gl_update(GLFWwindow *window);
 void gl_cleanup(GLFWwindow *window);

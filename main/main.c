@@ -83,25 +83,25 @@ int main(int argc, char **argv)
 				config_path = malloc(sizeof(char) * (strlen(argv[i]) + 1));
 				strcpy(config_path, argv[i]);
 			}
-			else if(!strncmp(argv[i], "--ppm", 2)) {
+			else if(!strncmp(argv[i], "--ppm", 5)) {
 				picture = true;
 			}
-			else if(!strncmp(argv[i], "--gl", 3)) {
+			else if(!strncmp(argv[i], "--gl", 4)) {
 				opengl = true;
 			}
-			else if(!strncmp(argv[i], "--vk", 3)) {
+			else if(!strncmp(argv[i], "--vk", 4)) {
 				vulkan = true;
 			}
-			else if(!strncmp(argv[i], "--sdl", 4)) {
+			else if(!strncmp(argv[i], "--sdl", 5)) {
 				sdl = true;
 			}
-			else if(!strncmp(argv[i], "--cuda", 5)) {
+			else if(!strncmp(argv[i], "--cuda", 6)) {
 				cuda = true;
 			}
-			else if(!strncmp(argv[i], "--openmp", 7)) {
+			else if(!strncmp(argv[i], "--openmp", 8)) {
 				openmp = true;
 			}
-			else if(!strncmp(argv[i], "--pthread", 8)) {
+			else if(!strncmp(argv[i], "--pthread", 9)) {
 				threads = true;
 			}
 		}
@@ -126,31 +126,32 @@ int main(int argc, char **argv)
 	
 	raytracer rt = raytracer_test(c);
 
-	int (*compute)(raytracer rt, void *cuda_rt) = cpu_render;
+	int (*compute)(raytracer, void *) = &cpu_render;
 		
 	if(threads) {
 		#ifdef USE_PTHREAD
-		compute = threaded_render;
+		compute = &pthread_render;
 		#else
-		log_msg(ERROR, "You need to compile with pthread support to use -threads");
+		log_msg(ERROR, "You need to compile with pthread support to use --pthread\n");
+	        return -1;
 		#endif
-		
 	}
 	if(openmp) {
 		#ifdef USE_OPENMP
-		compute = openmp_render;
+		compute = &openmp_render;
 		#else
-		log_msg(ERROR, "You need to compile with OPENMP support to use -openmp");
+		log_msg(ERROR, "You need to compile with OPENMP support to use --openmp\n");
+		return -1;
 		#endif
 	}
 	if(cuda) {
 		#ifdef USE_CUDA
-		compute = cuda_render;
+		compute = &cuda_render;
 		#else
-		log_msg(ERROR, "You need to compile with CUDA support to use -cuda");
+		log_msg(ERROR, "You need to compile with CUDA support to use --cuda\n");
+		return -1;
 		#endif	
 	}
-		
 	
 	//change this to use config
 	//refactor entry-point for render_method and raytracer method
@@ -163,32 +164,33 @@ int main(int argc, char **argv)
 			log_msg(WARN, "You passed too many arguments for the render\n");
 		}
 		else if(opengl && !vulkan && !sdl) {
-			#if OPENGL
+			#ifdef USE_OPENGL
 		        gl_realtime_render(rt, compute);
                         #else
-			log_msg(ERROR, "You did not compile with OpenGL support");
+			log_msg(ERROR, "You did not compile with OpenGL support\n");
 			#endif 
 		}
 		else if(!opengl && vulkan && !sdl) {
-			#if VULKAN
-		        vk_realtime_render(rt);
+			#ifdef USE_VULKAN
+		        vk_realtime_render(rt, compute);
 			#else
-			log_msg(ERROR, "You did not compile with Vulkan support");
+			log_msg(ERROR, "You did not compile with Vulkan support\n");
 			#endif 
 		}
 		else if(!opengl && !vulkan && sdl) {
-			#if SDL
-			sdl_realtime_render(rt);
+			#ifdef USE_SDL
+			sdl_realtime_render(rt, compute);
 			#else
-			log_msg(ERROR, "You did not compile with SDL support");
+			log_msg(ERROR, "You did not compile with SDL support\n");
 			#endif 
 		}
 		else if(!(opengl && vulkan && sdl)) {
+			#ifdef USE_OPENGL
 			log_msg(WARN, "No argument selected for the renderer, defaulting to opengl\n");
-			gl_realtime_render(rt);
-		}
-		else {
-			log_msg(WARN, "More than two arguments supplied for the renderer, defaulting to opengl\n");			gl_realtime_render(rt);
+			gl_realtime_render(rt, compute);
+			#else
+			log_msg(ERROR, "You did not compile with any renderer support\n");
+			#endif 
 		}
 	}
 	

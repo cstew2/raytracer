@@ -25,15 +25,15 @@ static GLuint tex;
 static GLuint shader;
 
 static raytracer r;
-
-//
-//TEMP
-cuda_rt *crt;
-//
+static cuda_rt *crt;
 
 void gl_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt))
 {
 	r = rt;
+	#ifdef USE_CUDA
+	crt = cuda_init(r);
+	#endif
+	
 	GLFWwindow *window = gl_init(rt.config);
 
 	if(!window) {
@@ -45,7 +45,7 @@ void gl_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt
 	while(!glfwWindowShouldClose(window)) {
 		gl_input(window);
 		gl_update(window);
-		gl_render(window);
+		gl_render(window, compute);
 	}
 	gl_cleanup(window);
 }
@@ -134,22 +134,14 @@ GLFWwindow *gl_init(config c)
 	
 	//setup the raytracer
 	log_msg(INFO, "Starting raytracer\n");
-
-	//
-	//TEMP
-	//
-	crt = cuda_init(r);
 	
 	return window;
 }
 
-void gl_render(GLFWwindow *window)
+void gl_render(GLFWwindow *window, int (*compute)(raytracer rt, void *cuda_rt))
 {
-	//get next from from raytracing renderer
-	//cpu_render(r);
-	//threaded_render(r);
-	cuda_render(r, crt);
-	//openmp_render(r);
+	//get next frame from from raytracing renderer
+	compute(r, crt);
 	
 	glBindTexture(GL_TEXTURE_2D, tex);
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, r.canvas.width, r.canvas.height, GL_RGBA,

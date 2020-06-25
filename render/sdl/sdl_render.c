@@ -10,9 +10,9 @@
 #include "compute/openmp/openmp_raytracer.h"
 #include "compute/cpu/cpu_raytracer.h"
 
-void sdl_realtime_render(raytracer rt)
+void sdl_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt))
 {
-	sdl_data *r = sdl_init(rt);
+	sdl_data *r = sdl_init(rt, compute);
 	while(!r->quit) {
 		sdl_input(r);
 		sdl_update(r);
@@ -21,7 +21,7 @@ void sdl_realtime_render(raytracer rt)
 	sdl_term(r);
 }
 
-sdl_data *sdl_init(raytracer rt)
+sdl_data *sdl_init(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt))
 {
 	log_msg(INFO, "Initializing SDL\n");
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -33,6 +33,14 @@ sdl_data *sdl_init(raytracer rt)
 	data->quit = false;
 	data->rt = rt;
 
+	#ifdef USE_CUDA
+	data->crt = cuda_init(rt);
+	#else
+	data->crt = NULL;
+	#endif
+
+	data->compute = compute;
+	
 	log_msg(INFO, "Creating window\n");
         data->window = SDL_CreateWindow("SDL Raytracer",
 				     SDL_WINDOWPOS_CENTERED,
@@ -101,10 +109,7 @@ void sdl_resize(sdl_data *data)
 void sdl_render(sdl_data *data)
 {
 	//get next from from raytracing renderer
-	//cpu_render(data->r, NULL);
-	threaded_render(data->rt, NULL);
-	//cuda_render(data->r, NULL);
-	//openmp_render(data->rt, NULL);
+	data->compute(data->rt, data->crt);
 
 	//need to convert from 4 floats to packed 32 bit int
 	for(int j=0; j < data->rt.canvas.height; j++) {

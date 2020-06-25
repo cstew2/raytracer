@@ -13,7 +13,7 @@
 pthread_t threads[THREAD_COUNT];
 threaded_args args[THREAD_COUNT];
 
-int threaded_render(const raytracer rt, void *cuda_rt)
+int pthread_render(const raytracer rt, void *cuda_rt)
 {
 	int work = (rt.camera.width*rt.camera.height)/THREAD_COUNT;
 	
@@ -21,7 +21,7 @@ int threaded_render(const raytracer rt, void *cuda_rt)
 		args[t].rt = rt;
 		args[t].c = calloc(sizeof(vec4), work);
 		args[t].id = t;
-		pthread_create(&threads[t], NULL, &threaded_render_work,
+		pthread_create(&threads[t], NULL, &pthread_render_work,
 			       (void*) &args[t]);
 	}
 
@@ -38,7 +38,7 @@ int threaded_render(const raytracer rt, void *cuda_rt)
 	return 0;
 }
 
-void *threaded_render_work(void *args)
+void *pthread_render_work(void *args)
 {
 	threaded_args *ta = (threaded_args *)args;
 	int work = ((ta->rt.camera.width*ta->rt.camera.height)/THREAD_COUNT);

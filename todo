@@ -34,7 +34,7 @@ raytracing backends:
 	(DONE)-sdl
 	(DONE)-threaded implementation
 	(DONE)-openmp implementation
-	-cuda implementation
+	(DONE)-cuda implementation
 	-opencl implementation
 
 todo later:

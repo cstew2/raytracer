@@ -6,7 +6,7 @@
 
 #include "render/raytracer.h"
 
-void vk_realtime_render(raytracer rt);
+void vk_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt));
 
 GLFWwindow *vk_glfw_init(config c);
 VkInstance vk_init(void);

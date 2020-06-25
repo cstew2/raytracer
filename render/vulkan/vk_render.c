@@ -9,10 +9,16 @@ int WINDOW_WIDTH;
 int WINDOW_HEIGHT;
 
 raytracer r;
+void *crt;
 
-void vk_realtime_render(raytracer rt)
+void vk_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt))
 {
 	r = rt;
+	
+        #ifdef USE_CUDA
+	//cuda_init(rt);
+	#endif
+	
 	GLFWwindow *window = vk_glfw_init(rt.config);
 	VkInstance instance = vk_init();
 	

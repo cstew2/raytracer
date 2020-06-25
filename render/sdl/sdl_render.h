@@ -10,7 +10,10 @@ typedef struct {
 	SDL_Renderer *renderer;
 	SDL_Texture *texture;
 	raytracer rt;
+	void *crt;
 
+	int (*compute)(raytracer rt, void *cuda_rt);
+	
 	uint32_t *pixel_buffer;
 	
 	int window_width;
@@ -28,9 +31,9 @@ typedef struct {
 	unsigned int last_ticks;
 }sdl_data;
 
-void sdl_realtime_render(raytracer rt);
+void sdl_realtime_render(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt));
 
-sdl_data *sdl_init(raytracer rt);
+sdl_data *sdl_init(raytracer rt, int (*compute)(raytracer rt, void *cuda_rt));
 void sdl_term(sdl_data *data);
 void sdl_resize(sdl_data *data);
 
